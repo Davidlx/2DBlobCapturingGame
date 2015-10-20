@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+        .welcome {text-align:center; font-size: 15px; color: grey;}
+        .private {color: blue; }
+        .system {text-align:center; color: grey; }
+        .error {color: red;}
+        .typing {color: grey;}
+    </style>
+  </head>
+  <body onload="diag()">
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" placeholder="Type here..." /><button>Send</button>
+    </form>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var temp = $('#m').val();
+      var username;
+      socket = io();
+
+      function diag(){
+        var str = prompt("Enter your nickname: ", "");
+        username = str;
+        socket.emit('user name', username);
+      }
+
+      function log(msg){
+        $('#messages').append($('<li>').text(msg));
+      }
+
+      function privateLog(msg){
+        $('#messages').append($('<li>').addClass('private').text(msg));
+      }
+
+      function systemLog(msg){
+        $('#messages').append($('<li>').addClass('system').text(msg));
+      }
+
+      function errorLog(msg){
+        $('#messages').append($('<li>').addClass('error').text(msg));
+      }
+
+      function typingLog(name){
+        var el = $('<li>').addClass('typing').text(name+" is typing...");
+        $('#messages').append(el);
+        setTimeout(function(){
+          el.remove();
+        },1000);
+      }
+      $('form').submit(function(){
+        var string = $('#m').val();
+
+        if(string.charAt(0) == '@'){
+          var space = string.indexOf(' ');
+          var to = string.substring(1, space);
+          var content = string.substring(space+1, string.length-1);
+          socket.emit('private message', username, to, content);
+        }
+        else{
+          socket.emit('chat message', username+": "+$('#m').val());
+        }
+        $('#m').val('');
+        return false;
+      });
+
+      window.setInterval(function(){
+        temp = $('#m').val();
+      }, 3000);
+
+      window.setInterval(function(){
+        if (temp != $('#m').val()){
+          socket.emit('typing', username);
+        }
+      }, 1000);
+        
+
+      
+
+
+      socket.on('welcome', function(){
+        $('#messages').append($('<li>').addClass('welcome').text("Welcome to My-first-homework Chat Room!"));
+      });
+
+      socket.on('user login', function(name){
+        systemLog(name+" is connected");
+      });
+
+      socket.on('chat message', function(msg){
+        log(msg);
+      });
+
+      socket.on('disconnect', function(name){
+        systemLog(name+" is disconnected");
+      });
+
+      socket.on('private message receive', function(from, msg){
+        privateLog("[Private]"+from+" says to you: "+msg);
+      });
+
+      socket.on('private message succ', function(to, msg){
+        privateLog("[Private]You said to "+to+": "+msg);
+      });
+
+      socket.on('private message fail', function(to){
+        errorLog("[System]Cannot find user "+to+"!");
+      });
+
+      socket.on('users count', function(num){
+        if(num>1){
+          systemLog("There are "+num+" users now");
+        }
+        else{
+          systemLog("There is "+num+" user now");
+        }
+      });
+
+      socket.on('typing', function(username){
+        typingLog(username);
+      });
+
+    </script>
+  </body>
+</html>
