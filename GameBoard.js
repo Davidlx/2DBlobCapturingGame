@@ -16,11 +16,11 @@ function GameBoard (width,height) {
     this.score = [];
     this.status = [];
     this.rankBoard = [];
+    this.timestamp = [];
 
     this.tolerance = 20;
 
     //init the game, center of the game is (0,0)
-
 }
  
 
@@ -44,34 +44,34 @@ GameBoard.prototype.getRankBoard = function() {
     return rankBoard;
 };
 
-GameBoard.prototype.updateUserDirection = function(index, posi_x, posi_y,newDirection,io) {
+GameBoard.prototype.updateUserDirection = function(index, posi_x, posi_y,newDirection,io,timestamp) {
     GameBoard.prototype.updateUserPosition(index, posi_x, posi_y, io);
     this.direction[index] = newDirection;
     io.emit('update direction', index, newDirection);
 };
 
-GameBoard.prototype.updateUserSpeed = function(index, posi_x, posi_y,newSpeed,io) {
+GameBoard.prototype.updateUserSpeed = function(index, posi_x, posi_y,newSpeed,io,timestamp) {
     //new Speed means the relative speed with its maximum speed
     GameBoard.prototype.updateUserPosition(index, posi_x, posi_y, io);
     this.speed[index] = newSpeed;
     io.emit('update speed', index, newSpeed);
 };
 
-GameBoard.prototype.updateUserStatus = function(index, posi_x, posi_y,newStatus,io){
+GameBoard.prototype.updateUserStatus = function(index, posi_x, posi_y,newStatus,io,timestamp){
 	//update user status including power ups etc
     GameBoard.prototype.updateUserPosition(index, posi_x, posi_y, io);
     this.status[index] = newStatus;
     io.emit('update statue', index, newStatus);
 }
 
-GameBoard.prototype.updateUserPosition = function(index, posi_x, posi_y,io){
+GameBoard.prototype.updateUserPosition = function(index, posi_x, posi_y,io,timestamp){
 	//update user position
     this.position[index*2] = posi_x;
     this.position[index*2+1] = posi_y;
     io.emit('update position', index, posi_x, posi_y);
 }
 
-GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y,score,io){
+GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y,score,io,timestamp){
 	//update user score
     GameBoard.prototype.updateUserPosition(index, posi_x, posi_y, io);
     this.score[index] = score;
@@ -96,7 +96,7 @@ GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y,score,io){
 
 
 //logic functions for validation
-GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io) {
+GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,timestamp) {
     //validate the information and store the information
     //if the inforamtion is not correct but in the range of tolerance, then boardcast to other users
     //要算向量，我也是醉了
@@ -126,7 +126,7 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io) {
     }
 };
 
-GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io) {
+GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,timestamp) {
     //****
 	if (!GameBoard.prototype.validateUserPosition(index, posi_x, posi_y,io)){
 		//validation failed
@@ -138,7 +138,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io) 
 	var food_y = this.position[food_index*2+1];
 	if (Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))+1<this.score[index]) {
 		//update Score
-    	GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y, this.score[index]+1, io);
+    	GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y, this.score[index]+1, io,timestamp);
 	}else{
 		//unable to eat
 		this.sockets[index].emit('unable to eat');
@@ -146,7 +146,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io) 
 	//may involve powerup, add later
 };
 
-GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_index,io) {
+GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_index,io,timestamp) {
 	//similar to userEatFood, but need to inform the eaten user.
     GameBoard.prototype.updateUserPosition(index, posi_x, posi_y, io);
 
@@ -175,7 +175,7 @@ GameBoard.prototype.deleteUser = function(index, io){
     io.emit('user leave', index, posi_x, posi_y);
 };
 
-GameBoard.prototype.resetUser = function(index, io){
+GameBoard.prototype.resetUser = function(index, io,timestamp){
 	//when the user connect, update the user information.
     var posi_x = generate_random_posi();
     var posi_y = generate_random_posi();
@@ -185,7 +185,7 @@ GameBoard.prototype.resetUser = function(index, io){
     GameBoard.prototype.updateUserStatus = function(index, posi_x, posi_y, this.STATUS[0], io)
 };
 
-GameBoard.prototype.generateFood = function (num) {
+GameBoard.prototype.generateFood = function (num,timestamp) {
 	//generate the food
     //****
     var posi_x = generate_random_posi();
@@ -207,7 +207,7 @@ GameBoard.prototype.generateFullInfo = function(){
     //****
 };
 
-GameBoard.prototype.addUser = function(username,socket){
+GameBoard.prototype.addUser = function(username,socket,timestamp){
 	//when the user connect, update the user information.
     //****
     //****
@@ -221,4 +221,15 @@ GameBoard.prototype.addUser = function(username,socket){
     this.direction.push(0);
     this.score.push(Default_User_Mas);
     this.status.push(this.STATUS[0]);
+};
+
+
+
+//private functions
+GameBoard.prototype.getTimeStamp = function(index){
+    return this.timestamp[index];
+};
+
+GameBoard.prototype.setTimeStamp = function(index,timestamp){
+    this.timestamp[index] = timestamp;
 };
