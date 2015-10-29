@@ -13,10 +13,10 @@ app.get('/', function(req, res){
 
 io.on('connection',function(socket){
 	console.log('a user connected');
-	socket.on('user_name', function(name){
+	socket.on('user_name', function(name,timestamp){
 		//new user added
 		console.log(name);
-		gameboard.addUser(name,socket, Date.now(),io);
+		gameboard.addUser(name,socket,timestamp,io);
 		socket.index = gameboard.name.length;
 		socket.emit('user_index', socket.index);
 		//should send all the information to user
@@ -33,33 +33,33 @@ io.on('connection',function(socket){
 	// 	socket.emit('get rank board', gameboard.getRankBoard(io));
 	// });
 
-	socket.on('update_user_direction', function(index, posi_x, posi_y,newDirection){
-		gameboard.updateUserDirection(index, posi_x, posi_y,newDirection,io,Date.now());
+	socket.on('update_user_direction', function(index, posi_x, posi_y,newDirection,timestamp){
+		gameboard.updateUserDirection(index, posi_x, posi_y,newDirection,io,timestamp);
 		//emit
 	});
 
-	io.on('update_user_speed', function(index, posi_x, posi_y,newSpeed){
-		gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io,Date.now());
+	io.on('update_user_speed', function(index, posi_x, posi_y,newSpeed,timestamp){
+		gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io,timestamp);
 		//emit
 	});
 
-	io.on('update_user_position', function(index, posi_x, posi_y){
-		gameboard.updateUserPosition(index, posi_x, posi_y,io,Date.now());
+	io.on('update_user_position', function(index, posi_x, posi_y,timestamp){
+		gameboard.updateUserPosition(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});
 
-	socket.on('regular_updates', function(index, posi_x, posi_y){
-		gameboard.validateUserPosition(index, posi_x, posi_y,io,Date.now());
+	socket.on('regular_updates', function(index, posi_x, posi_y,timestamp){
+		gameboard.validateUserPosition(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});
 
-	socket.on('eat_food', function(index, posi_x, posi_y,io){
-		gameboard.userEatFood(index, posi_x, posi_y,io,Date.now());
+	socket.on('eat_food', function(index, posi_x, posi_y,io,timestamp){
+		gameboard.userEatFood(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});
 
-	socket.on('eat_user', function(index, posi_x,posi_y,user_index,io){
-		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io,Date.now());
+	socket.on('eat_user', function(index, posi_x,posi_y,user_index,io,timestamp){
+		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io,timestamp);
 	});
 });
 
