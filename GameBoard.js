@@ -25,7 +25,7 @@ function GameBoard (width,height) {
 
     //init the game, center of the game is (0,0)
 }
- 
+
 
 //basic fucntions including getters and setters
 GameBoard.prototype.getUserPosition = function(index) {
@@ -42,11 +42,6 @@ GameBoard.prototype.getUserScore = function(index) {
     return this.score[index];
 };
 
-GameBoard.prototype.getRankBoard = function() {
-    //top 10
-    return rankBoard;
-};
-
 GameBoard.prototype.updateUserDirection = function(index, posi_x, posi_y,newDirection,io,timestamp) {
     GameBoard.prototype.validateUserPosition(index, posi_x, posi_y, io);
     this.direction[index] = newDirection;
@@ -59,13 +54,13 @@ GameBoard.prototype.updateUserSpeed = function(index, posi_x, posi_y,newSpeed,io
     //new Speed means the relative speed with its maximum speed
     GameBoard.prototype.updateUserPosition(index, posi_x, posi_y, io);
     this.speed[index] = newSpeed;
-    
+
     boardcaseToAllUser(io,"speed_update",{index:index,speed:newSpeed});
 };
 
 GameBoard.prototype.updateUserStatus = function(index, posi_x, posi_y,newStatus,io,timestamp){
 	//update user status including power ups etc
-    
+
     GameBoard.prototype.validateUserPosition(index, posi_x, posi_y, io);
     this.status[index] = newStatus;
 
@@ -77,7 +72,7 @@ GameBoard.prototype.updateUserPosition = function(index, posi_x, posi_y,io,times
     GameBoard.prototype.setTimeStamp(index,timestamp);
     this.position[index*2] = posi_x;
     this.position[index*2+1] = posi_y;
-    
+
     boardcaseToAllUser(io,"position_update",{index:index,score:score});
 }
 
@@ -111,7 +106,7 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
     //validate the information and store the information
     //if the inforamtion is not correct but in the range of tolerance, then boardcast to other users
     //要算向量，我也是醉了
-    
+
 
     if (GameBoard.prototype.validatePosition(index, posi_x, posi_y,timestamp)) {
     	//normal update,should not update all the user
@@ -182,6 +177,7 @@ GameBoard.prototype.deleteUser = function(index, io){
     this.direction.splice(index,1);
     this.score.splice(index,1);
     this.status.splice(index,1);
+    this.timestamp.splice(index,1);
 
     boardcaseToAllUser(io,"user_leave",{index:index});
     //should generate more food
@@ -191,10 +187,10 @@ GameBoard.prototype.resetUser = function(index, io,timestamp){
 	//when the user connect, update the user information.
     var posi_x = generate_random_posi(this.width);
     var posi_y = generate_random_posi(this.height);
-    GameBoard.prototype.updateUserPosition(index, RANDOM_X, RANDOM_Y, io);
-    GameBoard.prototype.updateUserSpeed(index, posi_x, posi_y, 0, io);
-    GameBoard.prototype.updateUserScore(index, posi_x, posi_y, this.Default_User_Mas, io);
-    GameBoard.prototype.updateUserStatus(index, posi_x, posi_y, this.statusType[0], io);
+    GameBoard.prototype.updateUserPosition(index, RANDOM_X, RANDOM_Y, io,timestamp);
+    GameBoard.prototype.updateUserSpeed(index, posi_x, posi_y, 0, io,timestamp);
+    GameBoard.prototype.updateUserScore(index, posi_x, posi_y, this.Default_User_Mas, io,timestamp);
+    GameBoard.prototype.updateUserStatus(index, posi_x, posi_y, this.statusType[0], io,timestamp);
 
     boardcaseToAllUser(io,"user_reset",{index:index,posi_x:posi_x,posi_y:posi_y,score:this.Default_User_Mas});
 };
@@ -213,14 +209,14 @@ GameBoard.prototype.generateFood = function (num,timestamp) {
 	    this.direction.push(0);
 	    this.score.push(1);
 	    this.status.push(this.statusType[1]);
-        this.timestamp.push(timestamp);
-        index = this.status.length-1;
+      this.timestamp.push(timestamp);
+      index = this.status.length-1;
 
-        boardcaseToAllUser(io,"food_add",{index:index,posi_x:posi_x,posi_y:posi_y});
+      boardcaseToAllUser(io,"food_add",{index:index,posi_x:posi_x,posi_y:posi_y});
     };
 };
 
-GameBoard.prototype.generateFullInfo = function(){
+GameBoard.prototype.generateFullInfo = function(index,io){
 	//when the user connect, update the information to user.
     //****
 };

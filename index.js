@@ -13,68 +13,53 @@ app.get('/', function(req, res){
 
 io.on('connection',function(socket){
 	console.log('a user connected');
-	socket.on('user name', function(name){
+	socket.on('user_name', function(name){
+		//new user added
 		console.log(name);
 		gameboard.addUser(name,socket, Date.now(),io);
 		socket.index = gameboard.name.length;
 		socket.emit('user_index', socket.index);
+		//should send all the information to user
 	});
 
 	socket.on('disconnect', function(index){
+		//delete user? or reconnect? or make the user invisiable and when it reconnect, user can start from where he left?
     	sockets.splice(index, 1);
     	gameboard.deleteUser(index, io);
 	});
 
-	io.on('get_user_position', function(index){
-		socket.emit('get user position', gameboard.getUserPosition(index));
-	});
+	//rank board will be updated by the system interms of events
+	// io.on('get_rank_board', function(io){
+	// 	socket.emit('get rank board', gameboard.getRankBoard(io));
+	// });
 
-	io.on('get_user_status', function(index){
-		socket.emit('get user status', gameboard.getUserStatus(index));
-	});
-
-	io.on('get_rank_board', function(io){
-		socket.emit('get rank board', gameboard.getRankBoard(io));
-	});
-
-	socket.on('update_user_direction', function(index, posi_x, posi_y,newDirection,io){
-		gameboard.updateUserDirection(index, posi_x, posi_y,newDirection,io);
+	socket.on('update_user_direction', function(index, posi_x, posi_y,newDirection){
+		gameboard.updateUserDirection(index, posi_x, posi_y,newDirection,io,Date.now());
 		//emit
 	});
 
-	io.on('update_user_speed', function(index, posi_x, posi_y,newSpeed,io){
-		gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io);
+	io.on('update_user_speed', function(index, posi_x, posi_y,newSpeed){
+		gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io,Date.now());
 		//emit
 	});
 
-	io.on('update_user_position', function(index, posi_x, posi_y,io){
-		gameboard.updateUserPosition(index, posi_x, posi_y,io);
+	io.on('update_user_position', function(index, posi_x, posi_y){
+		gameboard.updateUserPosition(index, posi_x, posi_y,io,Date.now());
 		//emit
 	});
 
-	io.on('update_score', function(index, posi_x, posi_y,score,io){
-		gameboard.updateUserScore(index, posi_x, posi_y,score,io);
-		//emit
-	});
-
-	socket.on('validate_user_position', function(index, posi_x, posi_y,io){
-		gameboard.validateUserPosition(index, posi_x, posi_y,io);
+	socket.on('regular_updates', function(index, posi_x, posi_y){
+		gameboard.validateUserPosition(index, posi_x, posi_y,io,Date.now());
 		//emit
 	});
 
 	socket.on('eat_food', function(index, posi_x, posi_y,io){
-		gameboard.userEatFood(index, posi_x, posi_y,io);
+		gameboard.userEatFood(index, posi_x, posi_y,io,Date.now());
 		//emit
 	});
 
-	socket.on('try_eat_user', function(index, posi_x,posi_y,user_index,io){
-		if (GameBoard.score[index]*PERCENTAGE > GameBoard.score[user_index]){
-			gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io);
-			//emit
-		}
-		else {
-			io.emit('eat_failed', index, user_index);
-		}
+	socket.on('eat_user', function(index, posi_x,posi_y,user_index,io){
+		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io,Date.now());
 	});
 });
 
