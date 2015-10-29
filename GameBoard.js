@@ -1,8 +1,11 @@
+module.exports = GameBoard;
+
+var io = require('socket.io');
 function GameBoard (width,height) {
     this.width = width;
     this.height = height;
-
-    var STATUS = ['not started','running'];
+    this.io = io;
+    this.statusType = ['not started','running'];
     var Default_User_Mas = 5;
     this.Default_Capture_percent = 0.5;
 
@@ -98,7 +101,7 @@ GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y,score,io,ti
     		this.rankBoard[i] = index;
     	}
     }
-    boardcaseToAllUser(io,"score_update",{index:index,score});
+    boardcaseToAllUser(io,"score_update",{index:index,score:score});
     io.emit('update score', index, score);
 }
 
@@ -180,18 +183,18 @@ GameBoard.prototype.deleteUser = function(index, io){
     this.score.splice(index,1);
     this.status.splice(index,1);
 
-    boardcaseToAllUser(io,"user_leave",{index:index,posi_x:posi_x,posi_y:posi_y});
+    boardcaseToAllUser(io,"user_leave",{index:index});
     //should generate more food
 };
 
 GameBoard.prototype.resetUser = function(index, io,timestamp){
 	//when the user connect, update the user information.
-    var posi_x = generate_random_posi();
-    var posi_y = generate_random_posi();
+    var posi_x = generate_random_posi(this.width);
+    var posi_y = generate_random_posi(this.height);
     GameBoard.prototype.updateUserPosition(index, RANDOM_X, RANDOM_Y, io);
-    GameBoard.prototype.updateUserSpeed = function(index, posi_x, posi_y, 0, io);
-    GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y, this.Default_User_Mas, io);
-    GameBoard.prototype.updateUserStatus = function(index, posi_x, posi_y, this.STATUS[0], io);
+    GameBoard.prototype.updateUserSpeed(index, posi_x, posi_y, 0, io);
+    GameBoard.prototype.updateUserScore(index, posi_x, posi_y, this.Default_User_Mas, io);
+    GameBoard.prototype.updateUserStatus(index, posi_x, posi_y, this.statusType[0], io);
 
     boardcaseToAllUser(io,"user_reset",{index:index,posi_x:posi_x,posi_y:posi_y,score:this.Default_User_Mas});
 };
@@ -209,7 +212,7 @@ GameBoard.prototype.generateFood = function (num,timestamp) {
 	    this.speed.push(0);
 	    this.direction.push(0);
 	    this.score.push(1);
-	    this.status.push(this.STATUS[1]);
+	    this.status.push(this.statusType[1]);
         this.timestamp.push(timestamp);
         index = this.status.length-1;
 
@@ -222,7 +225,7 @@ GameBoard.prototype.generateFullInfo = function(){
     //****
 };
 
-GameBoard.prototype.addUser = function(username,socket,timestamp){
+GameBoard.prototype.addUser = function(username,socket,timestamp,io){
 	//when the user connect, update the user information.
     //****
     //****
@@ -234,13 +237,13 @@ GameBoard.prototype.addUser = function(username,socket,timestamp){
     this.name.push(username);
     this.speed.push(0);
     this.direction.push(0);
-    this.score.push(Default_User_Mas);
-    this.status.push(this.STATUS[0]);
+    this.score.push(this.Default_User_Mas);
+    this.status.push(this.statusType[0]);
     this.timestamp.push(timestamp);
     index = this.status.length-1;
 
     //more info
-    boardcaseToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:username,});
+    boardcaseToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:username});
 };
 
 GameBoard.prototype.activateUser = function(index,timestamp,io){
@@ -311,5 +314,9 @@ function boardcaseToAllUser(io,tag,para){
 }
 
 function boardcaseToAUser(socket,tag,para){
-    socket.emit(tag,para);
+    io.socket.emit(tag,para);
+}
+
+function generate_random_posi(range){
+    return Math.random()*range-range/2;
 }

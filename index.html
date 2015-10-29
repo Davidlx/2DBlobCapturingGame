@@ -29,11 +29,12 @@
       var temp = $('#m').val();
       var username;
       socket = io();
+      socket.emit('user name', "test");
 
       function diag(){
         var str = prompt("Enter your nickname: ", "");
         username = str;
-        socket.emit('user name', username);
+        
       }
 
       function log(msg){
@@ -84,50 +85,9 @@
           socket.emit('typing', username);
         }
       }, 1000);
-        
 
-      
-
-
-      socket.on('welcome', function(){
-        $('#messages').append($('<li>').addClass('welcome').text("Welcome to My-first-homework Chat Room!"));
-      });
-
-      socket.on('user login', function(name){
-        systemLog(name+" is connected");
-      });
-
-      socket.on('chat message', function(msg){
-        log(msg);
-      });
-
-      socket.on('disconnect', function(name){
-        systemLog(name+" is disconnected");
-      });
-
-      socket.on('private message receive', function(from, msg){
-        privateLog("[Private]"+from+" says to you: "+msg);
-      });
-
-      socket.on('private message succ', function(to, msg){
-        privateLog("[Private]You said to "+to+": "+msg);
-      });
-
-      socket.on('private message fail', function(to){
-        errorLog("[System]Cannot find user "+to+"!");
-      });
-
-      socket.on('users count', function(num){
-        if(num>1){
-          systemLog("There are "+num+" users now");
-        }
-        else{
-          systemLog("There is "+num+" user now");
-        }
-      });
-
-      socket.on('typing', function(username){
-        typingLog(username);
+      socket.on('user_index', function(msg){
+        console.log(msg);
       });
 
     </script>
