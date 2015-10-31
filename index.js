@@ -17,7 +17,7 @@ io.on('connection',function(socket){
 		//new user added
 		console.log(name);
 		gameboard.addUser(name,socket,timestamp,io);
-		socket.index = gameboard.name.length;
+		socket.index = gameboard.name.length-1;
 		socket.emit('user_index', socket.index);
 		//should send all the information to user
 	});
