@@ -18,7 +18,7 @@
         .typing {color: grey;}
     </style>
   </head>
-  <body onload="diag()">
+  <body>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" placeholder="Type here..." /><button>Send</button>
@@ -28,16 +28,15 @@
     <script>
       var temp = $('#m').val();
       var username;
+      var posi_x;
+      var posi_y;
+      var index;
       socket = io();
-
-      function diag(){
-        var str = prompt("Enter your nickname: ", "");
-        username = str;
-        socket.emit('user name', username);
-      }
+      console.log(socket.emit('user_name', "test",new Date().getTime()));
 
       function log(msg){
         $('#messages').append($('<li>').text(msg));
+        console.log(msg)
       }
 
       function privateLog(msg){
@@ -52,83 +51,40 @@
         $('#messages').append($('<li>').addClass('error').text(msg));
       }
 
-      function typingLog(name){
-        var el = $('<li>').addClass('typing').text(name+" is typing...");
-        $('#messages').append(el);
-        setTimeout(function(){
-          el.remove();
-        },1000);
-      }
-      $('form').submit(function(){
-        var string = $('#m').val();
-
-        if(string.charAt(0) == '@'){
-          var space = string.indexOf(' ');
-          var to = string.substring(1, space);
-          var content = string.substring(space+1, string.length-1);
-          socket.emit('private message', username, to, content);
-        }
-        else{
-          socket.emit('chat message', username+": "+$('#m').val());
-        }
-        $('#m').val('');
-        return false;
+      socket.on('user_index', function(msg){
+        log(msg);
+        index = msg;
+        var MyInterval=setInterval("updateposi()",1000);
       });
 
-      window.setInterval(function(){
-        temp = $('#m').val();
-      }, 3000);
+      socket.on('validation_succeed',function(msg){
+        log('validation_succeed '+msg);
+        posi_x = msg.posi_x;
+        posi_y = msg.posi_y;
+      });
 
-      window.setInterval(function(){
-        if (temp != $('#m').val()){
-          socket.emit('typing', username);
-        }
-      }, 1000);
-        
+      socket.on('validation_failed',function(msg){
+        log('validation_failed '+msg);
+        posi_x = msg.posi_x;
+        posi_y = msg.posi_y;
+      });
+
+      socket.on('User_Add',function(msg){
+        log(msg);
+        posi_x = msg.posi_x;
+        posi_y = msg.posi_y;
+      });
+
+      
+
+      function updateposi(){
+        socket.emit('regular_updates', new Number(index),posi_x,posi_y,new Date().getTime());
+        console.log(new Date().getTime());
+      } 
 
       
 
 
-      socket.on('welcome', function(){
-        $('#messages').append($('<li>').addClass('welcome').text("Welcome to My-first-homework Chat Room!"));
-      });
-
-      socket.on('user login', function(name){
-        systemLog(name+" is connected");
-      });
-
-      socket.on('chat message', function(msg){
-        log(msg);
-      });
-
-      socket.on('disconnect', function(name){
-        systemLog(name+" is disconnected");
-      });
-
-      socket.on('private message receive', function(from, msg){
-        privateLog("[Private]"+from+" says to you: "+msg);
-      });
-
-      socket.on('private message succ', function(to, msg){
-        privateLog("[Private]You said to "+to+": "+msg);
-      });
-
-      socket.on('private message fail', function(to){
-        errorLog("[System]Cannot find user "+to+"!");
-      });
-
-      socket.on('users count', function(num){
-        if(num>1){
-          systemLog("There are "+num+" users now");
-        }
-        else{
-          systemLog("There is "+num+" user now");
-        }
-      });
-
-      socket.on('typing', function(username){
-        typingLog(username);
-      });
 
     </script>
   </body>
