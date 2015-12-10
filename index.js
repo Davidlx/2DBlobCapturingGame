@@ -1,6 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var path = require('path');
 var Gameboard = require('./GameBoard.js');
 var gameboard = new Gameboard(1024,1024);
 
@@ -8,7 +9,7 @@ var sockets = [];
 var PERCENTAGE = 0.9;
 
 app.get('/', function(req, res){
-  res.sendfile('index.html');
+  res.sendfile(path.join(__dirname, '../2DBlobClient/game/index.html'));
 });
 
 io.on('connection',function(socket){
