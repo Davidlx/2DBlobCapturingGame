@@ -1,15 +1,18 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
 var Gameboard = require('./GameBoard.js');
-var gameboard = new Gameboard(1024,1024);
+var gameboard = new Gameboard(10240,10240);
 
 var sockets = [];
 var PERCENTAGE = 0.9;
 
+app.use(express.static(path.join(__dirname,'../2DBlobClient/game')));
+
 app.get('/', function(req, res){
-  res.sendfile(path.join(__dirname, '../2DBlobClient/game/index.html'));
+  res.sendfile('/index.html');
 });
 
 io.on('connection',function(socket){
@@ -35,21 +38,27 @@ io.on('connection',function(socket){
 	// });
 
 	socket.on('update_user_direction', function(index, posi_x, posi_y,newDirection,timestamp){
+		console.log(" ");
+		console.log("update_user_direction");
 		gameboard.updateUserDirection(index, posi_x, posi_y,newDirection,io,timestamp);
 		//emit
 	});
 
-	io.on('update_user_speed', function(index, posi_x, posi_y,newSpeed,timestamp){
+	socket.on('update_user_speed', function(index, posi_x, posi_y,newSpeed,timestamp){
+		console.log(" ");
+		console.log("update_user_speed");
 		gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io,timestamp);
 		//emit
 	});
 
-	io.on('update_user_position', function(index, posi_x, posi_y,timestamp){
+	socket.on('update_user_position', function(index, posi_x, posi_y,timestamp){
 		gameboard.updateUserPosition(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});
 
 	socket.on('regular_updates', function(index, posi_x, posi_y,timestamp){
+		console.log(" ");
+		console.log("regular_updates");
 		gameboard.validateUserPosition(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});

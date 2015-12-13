@@ -43,7 +43,7 @@ GameBoard.prototype.getUserScore = function(index) {
 };
 
 GameBoard.prototype.updateUserDirection = function(index, posi_x, posi_y,newDirection,io,timestamp) {
-    this.validateUserPosition(index, posi_x, posi_y, io);
+    this.validateUserPosition(index, posi_x, posi_y, io,timestamp);
     this.direction[index] = newDirection;
 
     boardcastToAllUser(io,"update_direction",{index:index,newDirection:newDirection});
@@ -52,9 +52,9 @@ GameBoard.prototype.updateUserDirection = function(index, posi_x, posi_y,newDire
 
 GameBoard.prototype.updateUserSpeed = function(index, posi_x, posi_y,newSpeed,io,timestamp) {
     //new Speed means the relative speed with its maximum speed
-    this.updateUserPosition(index, posi_x, posi_y, io);
+    this.validateUserPosition(index, posi_x, posi_y, io, timestamp);
     this.speed[index] = newSpeed;
-
+    console.log("speed updated");
     boardcastToAllUser(io,"speed_update",{index:index,speed:newSpeed});
 };
 
@@ -106,19 +106,23 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
     //validate the information and store the information
     //if the inforamtion is not correct but in the range of tolerance, then boardcast to other users
     //要算向量，我也是醉了
-    console.log('client '+timestamp);
+    sys_log('validateUserPosition client '+timestamp);
     if (this.validatePosition(index,timestamp,posi_x, posi_y)) {
     	//normal update,should not update all the user
     	this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
         boardcastToAUser(this.sockets[index],"validation_succeed",{index:index,posi_x:posi_x,posi_y:posi_y});
         boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
-
+        sys_log("validate succed");
         return true;
     }else{
     	//position is not right, should update all the user
         var posis = this.getEstimatedPosition(index,timestamp);
-    	this.updateUserPosition(index, posis[0], posis[1],io);
-        boardcastToAUser(this.sockets[index],"validation_failed",{posi_x:posis[0],posi_y:posis[1]});
+    	//this.updateUserPosition(index, posis[0], posis[1],io,timestamp);
+        //boardcastToAUser(this.sockets[index],"validation_failed",{posi_x:posis[0],posi_y:posis[1]});
+        this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
+        boardcastToAUser(this.sockets[index],"validation_failed",{index:index,posi_x:posi_x,posi_y:posi_y});
+        boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
+        sys_log("validate failed");
         return false;
     }
 };
@@ -225,20 +229,19 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
 	//when the user connect, update the user information.
     //****
     //****
-    console.log("add user "+timestamp);
+    sys_log("add user: timestamp =  "+timestamp);
     var posi_x = generate_random_posi(this.width);
     var posi_y = generate_random_posi(this.height);
     this.position.push(posi_x);
 	this.position.push(posi_y);
     this.sockets.push(socket);
     this.name.push(username);
-    this.speed.push(0);
+    this.speed.push(1);
     this.direction.push(0);
     this.score.push(this.Default_User_Mas);
     this.status.push(this.statusType[0]);
     this.timestamp.push(timestamp);
     index = this.status.length-1;
-    console.log("add user "+this.timestamp);
     //more info
     boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:username});
 };
@@ -260,11 +263,14 @@ GameBoard.prototype.getTimeStamp = function(index){
 GameBoard.prototype.getEstimatedPosition = function(index,timestamp){
     cur_x = this.position[(index*2)];
     cur_y = this.position[index*2+1];
-    last_timestamp = this.timestamp[index];
-    console.log(timestamp);
-    time_diff = timestamp - last_timestamp;
-    console.log(time_diff);
 
+    sys_log("getEstimatedPosition client previous posi: "+cur_x+" "+cur_y);
+
+    last_timestamp = this.timestamp[index];
+    sys_log("getEstimatedPosition timestamp: "+timestamp);
+    time_diff = timestamp - last_timestamp;
+    sys_log("getEstimatedPosition timediff: "+time_diff);
+    sys_log("getEstimatedPosition speed: "+this.speed[index]);
     est_x = cur_x + this.speed[index]*Math.cos(this.direction[index])*(time_diff/1000);
     est_y = cur_y + this.speed[index]*Math.sin(this.direction[index])*(time_diff/1000);
 
@@ -285,21 +291,21 @@ GameBoard.prototype.getEstimatedPosition = function(index,timestamp){
 
 GameBoard.prototype.validatePosition = function(index,timestamp,posi_x,posi_y){
     if (posi_x<(-this.width/2)||posi_x>this.width/2||posi_y<(-this.height/2)||posi_y>this.height/2) {
-        console.log("validatePosition "+"out of range");
+        sys_log("validatePosition "+"out of range");
         if (posi_x<(-this.width/2)) {
-            console.log("validatePosition "+"out of range of -x");
+            sys_log("validatePosition "+"out of range of -x");
         }
 
         if (posi_x>(this.width/2)) {
-            console.log("validatePosition "+"out of range of x");
+            sys_log("validatePosition "+"out of range of x");
         }
 
         if (posi_y<(-this.height/2)) {
-            console.log("validatePosition "+"out of range of -y");
+            sys_log("validatePosition "+"out of range of -y");
         }
 
         if (posi_x>(this.height/2)) {
-            console.log("validatePosition "+"out of range of +y");
+            sys_log("validatePosition "+"out of range of +y");
         }
         return false;
     }
@@ -309,6 +315,7 @@ GameBoard.prototype.validatePosition = function(index,timestamp,posi_x,posi_y){
     if (Math.sqrt(Math.pow((est[0]-posi_x),2)+Math.pow((est[1]-posi_y),2))<=this.tolerance) {
         return true;
     }else{
+        sys_log("position not consistent: est - "+est[0]+" "+est[1]+" - client "+posi_x+" "+posi_y);
         return false;
     }
 }
@@ -316,7 +323,7 @@ GameBoard.prototype.validatePosition = function(index,timestamp,posi_x,posi_y){
 
 GameBoard.prototype.setTimeStamp = function(index,timestamp){
     this.timestamp[index] = timestamp;
-    console.log("set time stamp "+timestamp);
+    sys_log("set time stamp "+timestamp);
 };
 
 
@@ -334,4 +341,8 @@ function boardcastToAUser(socket,tag,para){
 
 function generate_random_posi(range){
     return Math.random()*range-range/2;
+}
+
+function sys_log(msg){
+    //console.log(msg);
 }
