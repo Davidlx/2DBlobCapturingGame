@@ -51,11 +51,6 @@ io.on('connection',function(socket){
 		//emit
 	});
 
-	socket.on('update_user_position', function(index, posi_x, posi_y,timestamp){
-		gameboard.updateUserPosition(index, posi_x, posi_y,io,timestamp);
-		//emit
-	});
-
 	socket.on('regular_updates', function(index, posi_x, posi_y,timestamp){
 		console.log(" ");
 		console.log("regular_updates");
@@ -74,5 +69,9 @@ io.on('connection',function(socket){
 });
 
 http.listen(3000, function(){
-  console.log('listening on *:3000');
+    console.log('listening on *:3000');
 });
+
+function getUNIXTimestamp(){
+	return Math.floor(Date.now());
+}
