@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
 var Gameboard = require('./GameBoard.js');
-var gameboard = new Gameboard(10240,10240);
+var gameboard = new Gameboard(1600,1600);
 
 var sockets = [];
 var PERCENTAGE = 0.9;

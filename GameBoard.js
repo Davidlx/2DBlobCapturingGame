@@ -344,5 +344,5 @@ function generate_random_posi(range){
 }
 
 function sys_log(msg){
-    //console.log(msg);
+    console.log(msg);
 }
