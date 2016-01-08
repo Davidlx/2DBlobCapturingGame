@@ -17,6 +17,9 @@ app.get('/', function(req, res){
 
 io.on('connection',function(socket){
 	console.log('a user connected');
+
+
+
 	socket.on('user_name', function(name,timestamp){
 		//new user added
 		console.log(name);
@@ -24,6 +27,7 @@ io.on('connection',function(socket){
 		socket.index = gameboard.name.length-1;
 		socket.emit('user_index', socket.index);
 		//should send all the information to user
+		socket.emit('user_initial_position',100,100);
 	});
 
 	socket.on('disconnect', function(index){
