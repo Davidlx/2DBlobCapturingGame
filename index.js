@@ -23,7 +23,9 @@ io.on('connection',function(socket){
 		gameboard.addUser(name,socket,timestamp,io);
 		socket.index = gameboard.name.length-1;
 		socket.emit('user_index', socket.index);
+		//socket.emit('user_initial_position', gameboard.position[index*2], gameboard.position[index*2+1]);
 		//should send all the information to user
+		socket.emit('user_initial_position',100,100);
 	});
 
 	socket.on('disconnect', function(index){

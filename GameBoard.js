@@ -227,7 +227,7 @@ GameBoard.prototype.generateFullInfo = function(index,io){
 
 GameBoard.prototype.addUser = function(username,socket,timestamp,io){
 	//when the user connect, update the user information.
-    //****
+    //scan use list to find the first empty location.
     //****
     sys_log("add user: timestamp =  "+timestamp);
     var posi_x = generate_random_posi(this.width);
@@ -243,6 +243,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     this.timestamp.push(timestamp);
     index = this.status.length-1;
     //more info
+    boardcastToAUser(socket,"game_init_info",{position:this.position,name:this.name,speed:this.speed,direction:this.direction,score:this.score,status:this.status,rankboard:this.rankBoard});
     boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:username});
 };
 
@@ -340,7 +341,7 @@ function boardcastToAUser(socket,tag,para){
 }
 
 function generate_random_posi(range){
-    return Math.random()*range-range/2;
+    return Math.round(Math.random()*range);
 }
 
 function sys_log(msg){
