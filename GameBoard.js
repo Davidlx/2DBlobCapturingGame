@@ -20,10 +20,13 @@ function GameBoard (width,height) {
     this.status = [];
     this.rankBoard = [];
     this.timestamp = [];
+    this.food_posi = [];
+    this.food_type = [];
 
     this.tolerance = 20;
 
     //init the game, center of the game is (0,0)
+    this.generateFoods(50,getUNIXTimestamp());
 }
 
 
@@ -55,6 +58,7 @@ GameBoard.prototype.updateUserSpeed = function(index, posi_x, posi_y,newSpeed,io
     this.validateUserPosition(index, posi_x, posi_y, io, timestamp);
     this.speed[index] = newSpeed;
     console.log("speed updated");
+    sys_log("");
     boardcastToAllUser(io,"speed_update",{index:index,speed:newSpeed});
 };
 
@@ -129,8 +133,10 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
 
 GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,timestamp) {
     //****
-	if (!this.validateUserPosition(index, posi_x, posi_y,io)){
+    LowLog("User eat food");
+	if (!this.validateUserPosition(index, posi_x, posi_y,io,timestamp)){
 		//validation failed
+        HighLog("Eat food failed due to position validation failed");
 		return;
 	}
 	//do the eat logic
@@ -141,9 +147,12 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 		//update Score
     	this.updateUserScore(index, posi_x, posi_y, this.score[index]+1, io,timestamp);
         boardcastToAllUser(io,"food_eat",{index:index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
+        this.generateFood(getUNIXTimestamp());
+        HighLog("Eat food succ");
 	}else{
 		//unable to eat
 		boardcastToAUser(this.sockets[index],"unable_to_eat",{index:index,posi_x:posi_x,posi_y:posi_y,food_x:food_x,food_y:food_y});
+        HighLog("Eat food failed due to unable to eat");
 	}
 	//may involve powerup, add later
 };
@@ -199,30 +208,31 @@ GameBoard.prototype.resetUser = function(index, io,timestamp){
     boardcastToAllUser(io,"user_reset",{index:index,posi_x:posi_x,posi_y:posi_y,score:this.Default_User_Mas});
 };
 
-GameBoard.prototype.generateFood = function (num,timestamp) {
+GameBoard.prototype.generateFoods = function (num,timestamp) {
 	//generate the food
     //****
-    var posi_x = generate_random_posi();
-    var posi_y = generate_random_posi();
-    for (var i = num; i >= 0; i--) {
-    	this.position.push(posi_x);
-    	this.position.push(posi_y);
-	    this.sockets.push(null);
-	    this.name.push(null);
-	    this.speed.push(0);
-	    this.direction.push(0);
-	    this.score.push(1);
-	    this.status.push(this.statusType[1]);
-      this.timestamp.push(timestamp);
-      index = this.status.length-1;
 
-      boardcastToAllUser(io,"food_add",{index:index,posi_x:posi_x,posi_y:posi_y});
+    for (var i = num; i >= 0; i--) {
+        var posi_x = generate_random_posi(this.width);
+        var posi_y = generate_random_posi(this.height);
+        this.food_posi.push(posi_x);
+        this.food_posi.push(posi_y);
+
+        //generate food type
+        this.food_type.push(0);
+        //boardcastToAllUser(io,"food_add",{index:index,posi_x:posi_x,posi_y:posi_y});
     };
 };
 
-GameBoard.prototype.generateFullInfo = function(index,io){
-	//when the user connect, update the information to user.
+GameBoard.prototype.generateFood = function (timestamp) {
+    //generate the food
     //****
+    var posi_x = generate_random_posi(this.width);
+    var posi_y = generate_random_posi(this.height);
+    this.food_posi.push(posi_x);
+    this.food_posi.push(posi_y);
+    this.food_type.push(0);
+    boardcastToAllUser(io,"food_add",{food_index:this.food_posi.length-1,posi_x:posi_x,posi_y:posi_y,type:0});
 };
 
 GameBoard.prototype.addUser = function(username,socket,timestamp,io){
@@ -243,7 +253,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     this.timestamp.push(timestamp);
     index = this.status.length-1;
     //more info
-    boardcastToAUser(socket,"game_init_info",{position:this.position,name:this.name,speed:this.speed,direction:this.direction,score:this.score,status:this.status,rankboard:this.rankBoard});
+    boardcastToAUser(socket,"game_init_info",{position:this.position,name:this.name,speed:this.speed,direction:this.direction,score:this.score,status:this.status,rankboard:this.rankBoard, food:this.food_posi, food_type:this.food_type});
     boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:username});
 };
 
@@ -346,4 +356,16 @@ function generate_random_posi(range){
 
 function sys_log(msg){
     console.log(msg);
+}
+
+function LowLog(msg){
+    console.log("Low Log: "+msg);
+}
+
+function HighLog(msg){
+    console.log("High Log: "+msg);
+}
+
+function getUNIXTimestamp(){
+    return Math.floor(Date.now());//change the server accordingly.
 }

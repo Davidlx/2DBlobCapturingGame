@@ -68,8 +68,8 @@ io.on('connection',function(socket){
 		//emit
 	});
 
-	socket.on('eat_food', function(index, posi_x, posi_y,io,timestamp){
-		gameboard.userEatFood(index, posi_x, posi_y,io,timestamp);
+	socket.on('food_eat', function(index, posi_x, posi_y,food_index,timestamp){
+		gameboard.userEatFood(index, posi_x, posi_y,food_index,io,timestamp);
 		//emit
 	});
 
