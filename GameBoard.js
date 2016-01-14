@@ -136,6 +136,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
     LowLog("User eat food");
 	if (!this.validateUserPosition(index, posi_x, posi_y,io,timestamp)){
 		//validation failed
+        boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index});
         HighLog("Eat food failed due to position validation failed");
 		return;
 	}
@@ -146,12 +147,12 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 	if (Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))+1<this.score[index]) {
 		//update Score
     	this.updateUserScore(index, posi_x, posi_y, this.score[index]+1, io,timestamp);
-        boardcastToAllUser(io,"food_eat",{index:index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
+        boardcastToAllUser(io,"food_eat_succ",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index,score:this.score[index]});
         this.generateFood(getUNIXTimestamp());
         HighLog("Eat food succ");
 	}else{
 		//unable to eat
-		boardcastToAUser(this.sockets[index],"unable_to_eat",{index:index,posi_x:posi_x,posi_y:posi_y,food_x:food_x,food_y:food_y});
+		boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index});
         HighLog("Eat food failed due to unable to eat");
 	}
 	//may involve powerup, add later
@@ -178,10 +179,7 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
 
 };
 
-
-
 //logic fucntions for maintaning the game
-
 GameBoard.prototype.deleteUser = function(index, io){
 	this.position.splice(index,1);
     this.sockets.splice(index,1);
