@@ -6,7 +6,7 @@ function GameBoard (width,height) {
     this.height = height;
     this.io = io;
     this.statusType = ['not started','running'];
-    var Default_User_Mas = 5;
+    this.Default_User_Mas = 5;
     this.Default_Capture_percent = 0.5;
 
     //for game information
@@ -82,7 +82,7 @@ GameBoard.prototype.updateUserPosition = function(index, posi_x, posi_y,io,times
 
 GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y,score,io,timestamp){
 	//update user score
-    this.validateUserPosition(index, posi_x, posi_y, io);
+    this.validateUserPosition(index, posi_x, posi_y, io,timestamp);
     this.score[index] = score;
     //update rank board
     if (this.rankBoard.length<10) {
@@ -142,18 +142,19 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 	}
 	//do the eat logic
 
-	var food_x = this.position[food_index*2];
-	var food_y = this.position[food_index*2+1];
-	if (Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))+1<this.score[index]) {
+	var food_x = this.food_posi[food_index*2];
+	var food_y = this.food_posi[food_index*2+1];
+	if (Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))<=this.score[index]) {
 		//update Score
     	this.updateUserScore(index, posi_x, posi_y, this.score[index]+1, io,timestamp);
         boardcastToAllUser(io,"food_eat_succ",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index,score:this.score[index]});
-        this.generateFood(getUNIXTimestamp());
+        this.generateFood(food_index,getUNIXTimestamp(),io);
         HighLog("Eat food succ");
 	}else{
 		//unable to eat
 		boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index});
-        HighLog("Eat food failed due to unable to eat");
+        HighLog("Eat food failed due to unable to eat - the position of the food is not in the range of the user");
+        HighLog("Distance "+Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))+" ; User Mass: "+this.score[index]);
 	}
 	//may involve powerup, add later
 };
@@ -222,14 +223,14 @@ GameBoard.prototype.generateFoods = function (num,timestamp) {
     };
 };
 
-GameBoard.prototype.generateFood = function (timestamp) {
+GameBoard.prototype.generateFood = function (food_index,timestamp,io) {
     //generate the food
     //****
     var posi_x = generate_random_posi(this.width);
     var posi_y = generate_random_posi(this.height);
-    this.food_posi.push(posi_x);
-    this.food_posi.push(posi_y);
-    this.food_type.push(0);
+    this.food_posi[food_index*2]=posi_x;
+    this.food_posi[food_index*2+1]=posi_y;
+    this.food_type[food_index]=0;
     boardcastToAllUser(io,"food_add",{food_index:this.food_posi.length-1,posi_x:posi_x,posi_y:posi_y,type:0});
 };
 
