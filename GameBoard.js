@@ -161,10 +161,15 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 
 GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_index,io,timestamp) {
 	//similar to userEatFood, but need to inform the eaten user.
-    this.validateUserPosition(index, posi_x, posi_y, io);
-
+    LowLog("User Capturing User: "+this.position[user_index*2]+" "+this.position[user_index*2+1]+" user: "+this.position[index*2]+" "+this.position[index*2+1]);
+    if (!this.validateUserPosition(index, posi_x, posi_y,io,timestamp)){
+        //validation failed
+        boardcastToAUser(this.sockets[index],"user_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index});
+        HighLog("Capturing User failed due to position validation failed");
+        return;
+    }
     //calculate if the user can eat, the user's position can not be determined
-    var est = GameBoard.prototype.getEstimatedPosition(index,timestamp);
+    var est = GameBoard.prototype.getEstimatedPosition(user_index,timestamp);
     var posi__x = est[0];
     var posi__y = est[1];
 
@@ -172,12 +177,11 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
         //validation complete, prepare to eat.
         this.resetUser(user_index,io,timestamp);
         this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.Default_Capture_percent*this.score[user_index],io,timestamp);
-        boardcastToAllUser(io,"user_eat",{index:index,user_index:user_index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
+        boardcastToAllUser(io,"user_eat_succ",{index:index,user_index:user_index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
     }else{
         //failed to eat
         boardcastToAUser(this.sockets[index],"user_eat_fail",{index:index,user_index:user_index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
     }
-
 };
 
 //logic fucntions for maintaning the game
@@ -231,7 +235,7 @@ GameBoard.prototype.generateFood = function (food_index,timestamp,io) {
     this.food_posi[food_index*2]=posi_x;
     this.food_posi[food_index*2+1]=posi_y;
     this.food_type[food_index]=0;
-    boardcastToAllUser(io,"food_add",{food_index:this.food_posi.length-1,posi_x:posi_x,posi_y:posi_y,type:0});
+    boardcastToAllUser(io,"food_add",{food_index:food_index,posi_x:posi_x,posi_y:posi_y,type:0});
 };
 
 GameBoard.prototype.addUser = function(username,socket,timestamp,io){
