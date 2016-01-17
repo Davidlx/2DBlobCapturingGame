@@ -175,12 +175,13 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
 
     if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]) {
         //validation complete, prepare to eat.
-        this.resetUser(user_index,io,timestamp);
         this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.Default_Capture_percent*this.score[user_index],io,timestamp);
         boardcastToAllUser(io,"user_eat_succ",{index:index,user_index:user_index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
+        this.deleteUser(user_index,io);
     }else{
         //failed to eat
         boardcastToAUser(this.sockets[index],"user_eat_fail",{index:index,user_index:user_index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
+        HighLog("Capturing User failed due to user score is not big enough");
     }
 };
 
