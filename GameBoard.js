@@ -124,7 +124,7 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
     	//this.updateUserPosition(index, posis[0], posis[1],io,timestamp);
         //boardcastToAUser(this.sockets[index],"validation_failed",{posi_x:posis[0],posi_y:posis[1]});
         this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
-        boardcastToAUser(this.sockets[index],"validation_failed",{index:index,posi_x:posi_x,posi_y:posi_y});
+        //boardcastToAUser(this.sockets[index],"validation_failed",{index:index,posi_x:posi_x,posi_y:posi_y});
         boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
         sys_log("validate failed");
         return false;
@@ -160,8 +160,10 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 };
 
 GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_index,io,timestamp) {
+
 	//similar to userEatFood, but need to inform the eaten user.
     LowLog("User Capturing User: "+this.position[user_index*2]+" "+this.position[user_index*2+1]+" user: "+this.position[index*2]+" "+this.position[index*2+1]);
+    HighLog();
     if (!this.validateUserPosition(index, posi_x, posi_y,io,timestamp)){
         //validation failed
         boardcastToAUser(this.sockets[index],"user_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index});
@@ -169,9 +171,10 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
         return;
     }
     //calculate if the user can eat, the user's position can not be determined
-    var est = GameBoard.prototype.getEstimatedPosition(user_index,timestamp);
-    var posi__x = est[0];
-    var posi__y = est[1];
+    HighLog("User Capturing User: user_index "+user_index);
+    //var est = GameBoard.prototype.getEstimatedPosition(user_index,timestamp);
+    var posi__x = this.position[user_index*2];
+    var posi__y = this.position[user_index*2+1];
 
     if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]) {
         //validation complete, prepare to eat.
@@ -276,7 +279,8 @@ GameBoard.prototype.getTimeStamp = function(index){
 };
 
 GameBoard.prototype.getEstimatedPosition = function(index,timestamp){
-    cur_x = this.position[(index*2)];
+    HighLog(index);
+    cur_x = this.position[index*2];
     cur_y = this.position[index*2+1];
 
     sys_log("getEstimatedPosition client previous posi: "+cur_x+" "+cur_y);
