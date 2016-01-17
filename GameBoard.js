@@ -5,7 +5,7 @@ function GameBoard (width,height) {
     this.width = width;
     this.height = height;
     this.io = io;
-    this.statusType = ['not started','running'];
+    this.statusType = ['running','not started'];
     this.Default_User_Mas = 5;
     this.Default_Capture_percent = 0.5;
 
