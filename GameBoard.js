@@ -110,7 +110,7 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
     //validate the information and store the information
     //if the inforamtion is not correct but in the range of tolerance, then boardcast to other users
     //要算向量，我也是醉了
-    sys_log('validateUserPosition client '+timestamp);
+    sys_log('validateUserPosition client '+posi_x+" "+posi_y);
     if (this.validatePosition(index,timestamp,posi_x, posi_y)) {
     	//normal update,should not update all the user
     	this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
@@ -133,7 +133,7 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
 
 GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,timestamp) {
     //****
-    LowLog("User eat food");
+    LowLog("User eat food: "+this.food_posi[food_index*2]+" "+this.food_posi[food_index*2+1]+" user: "+this.position[index*2]+" "+this.position[index*2+1]);
 	if (!this.validateUserPosition(index, posi_x, posi_y,io,timestamp)){
 		//validation failed
         boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index});
@@ -284,37 +284,37 @@ GameBoard.prototype.getEstimatedPosition = function(index,timestamp){
     est_x = cur_x + this.speed[index]*Math.cos(this.direction[index])*(time_diff/1000);
     est_y = cur_y + this.speed[index]*Math.sin(this.direction[index])*(time_diff/1000);
 
-    if (est_x<-this.width/2) {
-        est_x = -this.width/2;
-    }else if (est_x>this.width/2){
-        est_x = this.width/2;
+    if (est_x<0) {
+        est_x = 0;
+    }else if (est_x>this.width){
+        est_x = this.width;
     }
 
-    if (est_y<-this.height/2) {
-        est_y = -this.height/2;
-    }else if (est_y>this.height/2) {
-        est_y = this.height/2;
+    if (est_y<0) {
+        est_y = 0;
+    }else if (est_y>this.height) {
+        est_y = this.height;
     }
 
     return [est_x,est_y];
 }
 
 GameBoard.prototype.validatePosition = function(index,timestamp,posi_x,posi_y){
-    if (posi_x<(-this.width/2)||posi_x>this.width/2||posi_y<(-this.height/2)||posi_y>this.height/2) {
-        sys_log("validatePosition "+"out of range");
-        if (posi_x<(-this.width/2)) {
+    if (posi_x<0||posi_x>this.width||posi_y<0||posi_y>this.height) {
+        sys_log("validatePosition "+"out of border");
+        if (posi_x<0) {
             sys_log("validatePosition "+"out of range of -x");
         }
 
-        if (posi_x>(this.width/2)) {
+        if (posi_x>this.width) {
             sys_log("validatePosition "+"out of range of x");
         }
 
-        if (posi_y<(-this.height/2)) {
+        if (posi_y<0) {
             sys_log("validatePosition "+"out of range of -y");
         }
 
-        if (posi_x>(this.height/2)) {
+        if (posi_x>this.height) {
             sys_log("validatePosition "+"out of range of +y");
         }
         return false;
