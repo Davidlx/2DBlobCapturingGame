@@ -176,7 +176,7 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
     var posi__x = this.position[user_index*2];
     var posi__y = this.position[user_index*2+1];
 
-    if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]) {
+    if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]&&this.status[user_index]==this.statusType[0]) {
         //validation complete, prepare to eat.
         this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.Default_Capture_percent*this.score[user_index],io,timestamp);
         boardcastToAllUser(io,"user_eat_succ",{index:index,user_index:user_index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
@@ -190,16 +190,17 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
 
 //logic fucntions for maintaning the game
 GameBoard.prototype.deleteUser = function(index, io){
-	this.position.splice(index,1);
-    this.sockets.splice(index,1);
-    this.name.splice(index,1);
-    this.speed.splice(index,1);
-    this.direction.splice(index,1);
-    this.score.splice(index,1);
-    this.status.splice(index,1);
-    this.timestamp.splice(index,1);
+	// this.position.splice(index,1);
+ //    this.sockets.splice(index,1);
+ //    this.name.splice(index,1);
+ //    this.speed.splice(index,1);
+ //    this.direction.splice(index,1);
+ //    this.score.splice(index,1);
+        this.status[index] = this.statusType[1];
+ //    this.timestamp.splice(index,1);
 
     boardcastToAllUser(io,"user_leave",{index:index});
+    HighLog(this.position);
     //should generate more food
 };
 
