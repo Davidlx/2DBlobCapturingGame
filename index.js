@@ -73,7 +73,7 @@ io.on('connection',function(socket){
 		//emit
 	});
 
-	socket.on('eat_user', function(index, posi_x,posi_y,user_index,io,timestamp){
+	socket.on('eat_user', function(index, posi_x,posi_y,user_index,timestamp){
 		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io,timestamp);
 	});
 });
