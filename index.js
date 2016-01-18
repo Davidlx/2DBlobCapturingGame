@@ -18,8 +18,6 @@ app.get('/', function(req, res){
 io.on('connection',function(socket){
 	console.log('a user connected');
 
-
-
 	socket.on('user_name', function(name,timestamp){
 		//new user added
 		console.log(name);
@@ -31,9 +29,9 @@ io.on('connection',function(socket){
 		socket.emit('user_initial_position',100,100);
 	});
 
-	socket.on('disconnect', function(index){
+	socket.on('disconnect', function(){
 		//delete user? or reconnect? or make the user invisiable and when it reconnect, user can start from where he left?
-    	gameboard.deleteUser(index, io);
+		gameboard.userDisconnect(socket,io);
     	console.log("A user has left");
 	});
 

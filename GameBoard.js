@@ -188,6 +188,16 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
     }
 };
 
+GameBoard.prototype.userDisconnect = function(socket,io){
+    HighLog("User Disconnect");
+    for (var i = 0; i <= this.sockets.length - 1; i++) {
+        if (this.sockets[i] == socket){
+            this.deleteUser(i,io);
+            return;
+        }
+    };
+}
+
 //logic fucntions for maintaning the game
 GameBoard.prototype.deleteUser = function(index, io){
 	// this.position.splice(index,1);
@@ -198,7 +208,7 @@ GameBoard.prototype.deleteUser = function(index, io){
  //    this.score.splice(index,1);
         this.status[index] = this.statusType[1];
  //    this.timestamp.splice(index,1);
-
+    HighLog("User "+index+" is deleted.");
     boardcastToAllUser(io,"user_leave",{index:index});
     HighLog(this.position);
     //should generate more food
