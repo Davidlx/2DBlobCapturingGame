@@ -33,8 +33,8 @@ io.on('connection',function(socket){
 
 	socket.on('disconnect', function(index){
 		//delete user? or reconnect? or make the user invisiable and when it reconnect, user can start from where he left?
-    	sockets.splice(index, 1);
     	gameboard.deleteUser(index, io);
+    	console.log("A user has left");
 	});
 
 	//rank board will be updated by the system interms of events
