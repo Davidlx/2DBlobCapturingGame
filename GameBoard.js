@@ -354,6 +354,8 @@ GameBoard.prototype.validatePosition = function(index,timestamp,posi_x,posi_y){
 GameBoard.prototype.setTimeStamp = function(index,timestamp){
     this.timestamp[index] = timestamp;
     sys_log("set time stamp "+timestamp);
+    sys_log("Time Lag "+ (getUNIXTimestamp()-timestamp));
+    boardcastToAUser(this.sockets[index],"timeLag",{time:(getUNIXTimestamp()-timestamp)});
 };
 
 
