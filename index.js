@@ -75,6 +75,12 @@ io.on('connection',function(socket){
 		console.log("User Eat Received");
 		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io,timestamp);
 	});
+
+  setInterval(function() {
+    console.log("update all user location");
+    gameboard.updateAllUserLocation(io);
+  }, 5000);
+
 });
 
 http.listen(3000, function(){

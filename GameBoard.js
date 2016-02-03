@@ -282,6 +282,16 @@ GameBoard.prototype.activateUser = function(index,timestamp,io){
     boardcastToAllUser(io,"User_Activation",{index:index});
 }
 
+GameBoard.prototype.updateAllUserLocation = function(io){
+    var count = this.socket.length;
+
+    for (var i = 0; i < count; i++) {
+      var temp_x = getEstimatedPosition(i,getUNIXTimestamp());
+      this.position[i*2] = temp_x[0];
+      this.position[i*2+1] = temp_x[1];
+    }
+    boardcastToAllUser(io,"updateAllUserLocation",{position:this.position});
+}
 
 
 //private functions
