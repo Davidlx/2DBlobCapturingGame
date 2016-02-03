@@ -283,10 +283,10 @@ GameBoard.prototype.activateUser = function(index,timestamp,io){
 }
 
 GameBoard.prototype.updateAllUserLocation = function(io){
-    var count = this.socket.length;
+    var count = this.sockets.length;
 
     for (var i = 0; i < count; i++) {
-      var temp_x = getEstimatedPosition(i,getUNIXTimestamp());
+      var temp_x = this.getEstimatedPosition(i,getUNIXTimestamp());
       this.position[i*2] = temp_x[0];
       this.position[i*2+1] = temp_x[1];
     }
