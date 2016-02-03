@@ -144,7 +144,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 
 	var food_x = this.food_posi[food_index*2];
 	var food_y = this.food_posi[food_index*2+1];
-	if (Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))<=this.score[index]) {
+	if (Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))<=this.score[index]+1) {
 		//update Score
     	this.updateUserScore(index, posi_x, posi_y, this.score[index]+1, io,timestamp);
         boardcastToAllUser(io,"food_eat_succ",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index,score:this.score[index]});
@@ -152,7 +152,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
         HighLog("Eat food succ");
 	}else{
 		//unable to eat
-		boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index});
+		    boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index, food_x:this.food_posi[food_index*2],food_y:this.food_posi[food_index*2+1]});
         HighLog("Eat food failed due to unable to eat - the position of the food is not in the range of the user");
         HighLog("Distance "+Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))+" ; User Mass: "+this.score[index]);
 	}
