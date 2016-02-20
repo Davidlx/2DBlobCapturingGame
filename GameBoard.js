@@ -130,6 +130,7 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
     //     return false;
     // }
     this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
+    return true;
 };
 
 GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,timestamp) {
@@ -207,7 +208,7 @@ GameBoard.prototype.deleteUser = function(index, io){
  //    this.speed.splice(index,1);
  //    this.direction.splice(index,1);
  //    this.score.splice(index,1);
-        this.status[index] = this.statusType[1];
+     this.status[index] = this.statusType[1];
  //    this.timestamp.splice(index,1);
     HighLog("User "+index+" is deleted.");
     boardcastToAllUser(io,"user_leave",{index:index});
