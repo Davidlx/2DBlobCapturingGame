@@ -110,25 +110,26 @@ GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,tim
     //validate the information and store the information
     //if the inforamtion is not correct but in the range of tolerance, then boardcast to other users
     //要算向量，我也是醉了
-    sys_log('validateUserPosition client '+posi_x+" "+posi_y);
-    if (this.validatePosition(index,timestamp,posi_x, posi_y)) {
-    	//normal update,should not update all the user
-    	this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
-        boardcastToAUser(this.sockets[index],"validation_succeed",{index:index,posi_x:posi_x,posi_y:posi_y});
-        boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
-        sys_log("validate succed");
-        return true;
-    }else{
-    	//position is not right, should update all the user
-        var posis = this.getEstimatedPosition(index,timestamp);
-    	//this.updateUserPosition(index, posis[0], posis[1],io,timestamp);
-        //boardcastToAUser(this.sockets[index],"validation_failed",{posi_x:posis[0],posi_y:posis[1]});
-        this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
-        //boardcastToAUser(this.sockets[index],"validation_failed",{index:index,posi_x:posi_x,posi_y:posi_y});
-        boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
-        sys_log("validate failed");
-        return false;
-    }
+    // sys_log('validateUserPosition client '+posi_x+" "+posi_y);
+    // if (this.validatePosition(index,timestamp,posi_x, posi_y)) {
+    // 	//normal update,should not update all the user
+    // 	this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
+    //     boardcastToAUser(this.sockets[index],"validation_succeed",{index:index,posi_x:posi_x,posi_y:posi_y});
+    //     boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
+    //     sys_log("validate succed");
+    //     return true;
+    // }else{
+    // 	//position is not right, should update all the user
+    //     var posis = this.getEstimatedPosition(index,timestamp);
+    // 	//this.updateUserPosition(index, posis[0], posis[1],io,timestamp);
+    //     //boardcastToAUser(this.sockets[index],"validation_failed",{posi_x:posis[0],posi_y:posis[1]});
+    //     this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
+    //     //boardcastToAUser(this.sockets[index],"validation_failed",{index:index,posi_x:posi_x,posi_y:posi_y});
+    //     boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
+    //     sys_log("validate failed");
+    //     return false;
+    // }
+    this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
 };
 
 GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,timestamp) {
@@ -285,11 +286,11 @@ GameBoard.prototype.activateUser = function(index,timestamp,io){
 GameBoard.prototype.updateAllUserLocation = function(io){
     var count = this.sockets.length;
 
-    for (var i = 0; i < count; i++) {
-      var temp_x = this.getEstimatedPosition(i,getUNIXTimestamp());
-      this.position[i*2] = temp_x[0];
-      this.position[i*2+1] = temp_x[1];
-    }
+    // for (var i = 0; i < count; i++) {
+    //   var temp_x = this.getEstimatedPosition(i,getUNIXTimestamp());
+    //   this.position[i*2] = temp_x[0];
+    //   this.position[i*2+1] = temp_x[1];
+    // }
     boardcastToAllUser(io,"updateAllUserLocation",{position:this.position});
 }
 

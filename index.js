@@ -48,14 +48,14 @@ io.on('connection',function(socket){
 	});
 
 	socket.on('update_user_speed', function(index, posi_x, posi_y,newSpeed,timestamp){
-		console.log(" ");
-		console.log("update_user_speed");
-		gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io,timestamp);
+		// console.log(" ");
+		// console.log("update_user_speed");
+		// gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io,timestamp);
 		//emit
 	});
 
 	socket.on('update_user_position', function(index, posi_x, posi_y,timestamp){
-		gameboard.updateUserPosition(index, posi_x, posi_y,io,timestamp);
+		//gameboard.updateUserPosition(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});
 
@@ -79,7 +79,7 @@ io.on('connection',function(socket){
   setInterval(function() {
     console.log("update all user location");
     gameboard.updateAllUserLocation(io);
-  }, 5000);
+  }, 25);
 
 });
 
