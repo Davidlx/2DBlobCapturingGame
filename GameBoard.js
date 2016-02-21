@@ -292,7 +292,7 @@ GameBoard.prototype.updateAllUserLocation = function(io){
     //   this.position[i*2] = temp_x[0];
     //   this.position[i*2+1] = temp_x[1];
     // }
-    boardcastToAllUser(io,"updateAllUserLocation",{position:this.position});
+    boardcastToAllUser(io,"updateAllUserLocation",{position:this.position,timestamp:getUNIXTimestamp()});
 }
 
 
