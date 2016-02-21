@@ -79,7 +79,7 @@ io.on('connection',function(socket){
   setInterval(function() {
     //console.log("update all user location");
     gameboard.updateAllUserLocation(io);
-  }, 25);
+  }, 10);
 
 });
 
