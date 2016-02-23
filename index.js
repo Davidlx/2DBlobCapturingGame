@@ -35,27 +35,8 @@ io.on('connection',function(socket){
     	console.log("A user has left");
 	});
 
-	//rank board will be updated by the system interms of events
-	// io.on('get_rank_board', function(io){
-	// 	socket.emit('get rank board', gameboard.getRankBoard(io));
-	// });
-
-	socket.on('update_user_direction', function(index, posi_x, posi_y,newDirection,timestamp){
-		console.log(" ");
-		console.log("update_user_direction");
-		gameboard.updateUserDirection(index, posi_x, posi_y,newDirection,io,timestamp);
-		//emit
-	});
-
-	socket.on('update_user_speed', function(index, posi_x, posi_y,newSpeed,timestamp){
-		// console.log(" ");
-		// console.log("update_user_speed");
-		// gameboard.updateUserSpeed(index, posi_x, posi_y,newSpeed,io,timestamp);
-		//emit
-	});
-
 	socket.on('update_user_position', function(index, posi_x, posi_y,timestamp){
-		//gameboard.updateUserPosition(index, posi_x, posi_y,io,timestamp);
+		gameboard.updateUserPosition(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});
 

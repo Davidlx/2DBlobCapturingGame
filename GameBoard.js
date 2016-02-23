@@ -45,23 +45,6 @@ GameBoard.prototype.getUserScore = function(index) {
     return this.score[index];
 };
 
-GameBoard.prototype.updateUserDirection = function(index, posi_x, posi_y,newDirection,io,timestamp) {
-    this.validateUserPosition(index, posi_x, posi_y, io,timestamp);
-    this.direction[index] = newDirection;
-
-    boardcastToAllUser(io,"update_direction",{index:index,newDirection:newDirection});
-    //io.emit('update direction', index, newDirection);
-};
-
-GameBoard.prototype.updateUserSpeed = function(index, posi_x, posi_y,newSpeed,io,timestamp) {
-    //new Speed means the relative speed with its maximum speed
-    this.validateUserPosition(index, posi_x, posi_y, io, timestamp);
-    this.speed[index] = newSpeed;
-    console.log("speed updated");
-    sys_log("");
-    boardcastToAllUser(io,"speed_update",{index:index,speed:newSpeed});
-};
-
 GameBoard.prototype.updateUserStatus = function(index, posi_x, posi_y,newStatus,io,timestamp){
 	//update user status including power ups etc
 
@@ -107,28 +90,6 @@ GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y,score,io,ti
 
 //logic functions for validation
 GameBoard.prototype.validateUserPosition = function(index, posi_x, posi_y,io,timestamp) {
-    //validate the information and store the information
-    //if the inforamtion is not correct but in the range of tolerance, then boardcast to other users
-    //要算向量，我也是醉了
-    // sys_log('validateUserPosition client '+posi_x+" "+posi_y);
-    // if (this.validatePosition(index,timestamp,posi_x, posi_y)) {
-    // 	//normal update,should not update all the user
-    // 	this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
-    //     boardcastToAUser(this.sockets[index],"validation_succeed",{index:index,posi_x:posi_x,posi_y:posi_y});
-    //     boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
-    //     sys_log("validate succed");
-    //     return true;
-    // }else{
-    // 	//position is not right, should update all the user
-    //     var posis = this.getEstimatedPosition(index,timestamp);
-    // 	//this.updateUserPosition(index, posis[0], posis[1],io,timestamp);
-    //     //boardcastToAUser(this.sockets[index],"validation_failed",{posi_x:posis[0],posi_y:posis[1]});
-    //     this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
-    //     //boardcastToAUser(this.sockets[index],"validation_failed",{index:index,posi_x:posi_x,posi_y:posi_y});
-    //     boardcastToAllUser(io,"position_update",{index:index,posi_x:posi_x,posi_y:posi_y});
-    //     sys_log("validate failed");
-    //     return false;
-    // }
     this.updateUserPosition(index, posi_x, posi_y,io,timestamp);
     return true;
 };
