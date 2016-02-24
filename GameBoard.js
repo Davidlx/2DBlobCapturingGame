@@ -6,7 +6,7 @@ function GameBoard (width,height) {
     this.height = height;
     this.io = io;
     this.statusType = ['running','not started'];
-    this.Default_User_Mas = 5;
+    this.Default_User_Mas = 10;
     this.Default_Capture_percent = 0.5;
 
     //for game information
@@ -223,10 +223,11 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     sys_log("add user: timestamp =  "+timestamp);
     var posi_x = generate_random_posi(this.width);
     var posi_y = generate_random_posi(this.height);
+    var user_name = username;
     this.position.push(posi_x);
 	this.position.push(posi_y);
     this.sockets.push(socket);
-    this.name.push(username);
+    this.name.push(user_name);
     this.speed.push(1);
     this.direction.push(0);
     this.score.push(this.Default_User_Mas);
@@ -235,7 +236,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     index = this.status.length-1;
     //more info
     boardcastToAUser(socket,"game_init_info",{position:this.position,name:this.name,speed:this.speed,direction:this.direction,score:this.score,status:this.status,rankboard:this.rankBoard, food:this.food_posi, food_type:this.food_type});
-    boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:username});
+    boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:user_name});
 };
 
 GameBoard.prototype.activateUser = function(index,timestamp,io){
