@@ -4,7 +4,9 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
 var Gameboard = require('./GameBoard.js');
-var gameboard = new Gameboard(1600,1600);
+
+var MAP_SIZE = 1600;
+var gameboard = new Gameboard(MAP_SIZE,MAP_SIZE);
 
 var sockets = [];
 var PERCENTAGE = 0.9;
@@ -26,7 +28,7 @@ io.on('connection',function(socket){
 		socket.emit('user_index', socket.index);
 		//socket.emit('user_initial_position', gameboard.position[index*2], gameboard.position[index*2+1]);
 		//should send all the information to user
-		socket.emit('user_initial_position',100,100);
+		socket.emit('user_initial_position',Math.round(Math.random()*MAP_SIZE),Math.round(Math.random()*MAP_SIZE));
 	});
 
 	socket.on('disconnect', function(){
