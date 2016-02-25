@@ -22,7 +22,6 @@ io.on('connection',function(socket){
 
 	socket.on('user_name', function(name,timestamp){
 		//new user added
-		console.log(name);
 		gameboard.addUser(name,socket,timestamp,io);
 		socket.index = gameboard.name.length-1;
 		socket.emit('user_index', socket.index);
@@ -43,8 +42,6 @@ io.on('connection',function(socket){
 	});
 
 	socket.on('regular_updates', function(index, posi_x, posi_y,timestamp){
-		console.log(" ");
-		console.log("regular_updates");
 		gameboard.validateUserPosition(index, posi_x, posi_y,io,timestamp);
 		//emit
 	});
@@ -55,7 +52,6 @@ io.on('connection',function(socket){
 	});
 
 	socket.on('eat_user', function(index, posi_x,posi_y,user_index,timestamp){
-		console.log("User Eat Received");
 		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io,timestamp);
 	});
 

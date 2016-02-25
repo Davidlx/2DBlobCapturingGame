@@ -350,15 +350,15 @@ function generate_random_posi(range){
 }
 
 function sys_log(msg){
-    console.log(msg);
+    //console.log(msg);
 }
 
 function LowLog(msg){
-    console.log("Low Log: "+msg);
+    //console.log("Low Log: "+msg);
 }
 
 function HighLog(msg){
-    console.log("High Log: "+msg);
+    //console.log("High Log: "+msg);
 }
 
 function getUNIXTimestamp(){
