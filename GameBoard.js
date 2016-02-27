@@ -248,12 +248,16 @@ GameBoard.prototype.activateUser = function(index,timestamp,io){
 GameBoard.prototype.updateAllUserLocation = function(io){
     var count = this.sockets.length;
 
-    // for (var i = 0; i < count; i++) {
-    //   var temp_x = this.getEstimatedPosition(i,getUNIXTimestamp());
-    //   this.position[i*2] = temp_x[0];
-    //   this.position[i*2+1] = temp_x[1];
-    // }
-    boardcastToAllUser(io,"updateAllUserLocation",{position:this.position,timestamp:getUNIXTimestamp()});
+    var userPosi = [];
+    var userId = [];
+    for (var i = 0; i < count; i++) {
+      if (this.status[i]==this.statusType[0]) {
+        userPosi.push(this.position[i*2]);
+        userPosi.push(this.position[i*2+1]);
+        userId.push(i);
+      }
+    }
+    boardcastToAllUser(io,"updateAllUserLocation",{position:userPosi,uid:userId,timestamp:getUNIXTimestamp()});
 }
 
 
