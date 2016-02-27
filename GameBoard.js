@@ -24,6 +24,7 @@ function GameBoard (width,height) {
     this.food_type = [];
 
     this.tolerance = 20;
+    this.activeUserID = new Array();
 
     //init the game, center of the game is (0,0)
     this.generateFoods(50,getUNIXTimestamp());
@@ -175,6 +176,12 @@ GameBoard.prototype.deleteUser = function(index, io){
     boardcastToAllUser(io,"user_leave",{index:index});
     HighLog(this.position);
     //should generate more food
+
+    for (var i = 0; i < this.activeUserID.length; i++) {
+      if (this.activeUserID[i]==index){
+        this.activeUserID.splice(i,1);
+      }
+    }
 };
 
 GameBoard.prototype.resetUser = function(index, io,timestamp){
@@ -225,7 +232,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     var posi_y = generate_random_posi(this.height);
     var user_name = username;
     this.position.push(posi_x);
-	this.position.push(posi_y);
+	  this.position.push(posi_y);
     this.sockets.push(socket);
     this.name.push(user_name);
     this.speed.push(1);
@@ -234,6 +241,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     this.status.push(this.statusType[0]);
     this.timestamp.push(timestamp);
     index = this.status.length-1;
+    this.activeUserID.push(index);
     //more info
     boardcastToAUser(socket,"game_init_info",{position:this.position,name:this.name,speed:this.speed,direction:this.direction,score:this.score,status:this.status,rankboard:this.rankBoard, food:this.food_posi, food_type:this.food_type});
     boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:user_name});
@@ -247,18 +255,13 @@ GameBoard.prototype.activateUser = function(index,timestamp,io){
 }
 
 GameBoard.prototype.updateAllUserLocation = function(io){
-    var count = this.sockets.length;
-
     var userPosi = [];
-    var userId = [];
-    for (var i = 0; i < count; i++) {
-      if (this.status[i]==this.statusType[0]) {
-        userPosi.push(this.position[i*2]);
-        userPosi.push(this.position[i*2+1]);
-        userId.push(i);
-      }
+    for (var i = 0; i < this.activeUserID.length; i++) {
+      var tempIndex = this.activeUserID[i];
+      userPosi.push(this.position[tempIndex*2]);
+      userPosi.push(this.position[tempIndex*2+1]);
     }
-    boardcastToAllUser(io,"updateAllUserLocation",{position:userPosi,uid:userId,timestamp:getUNIXTimestamp()});
+    boardcastToAllUser(io,"updateAllUserLocation",{position:userPosi,uid:this.activeUserID,timestamp:getUNIXTimestamp()});
 }
 
 
