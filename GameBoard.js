@@ -115,10 +115,10 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
         boardcastToAllUser(io,"food_eat_succ",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index, food_type: this.food_type[food_index],score:this.score[index]});
         this.generateFood(food_index,this.food_type[food_index],getUNIXTimestamp(),io);
         HighLog("Eat food succ");
-        if(this.food_type[food_index] == 1)
+        /*if(this.food_type[food_index] == 1)
         {
-            boardcastToAUser(io, "speed_up_succ", {index:index, speed:this.speed[index]});
-        }
+            boardcastToAUser(io, "speed_up_succ", {index:index});
+        }*/
 	}else{
 		//unable to eat
 		boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index, food_x:this.food_posi[food_index*2],food_y:this.food_posi[food_index*2+1]});
