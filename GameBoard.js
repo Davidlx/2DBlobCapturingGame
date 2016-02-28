@@ -27,7 +27,8 @@ function GameBoard (width,height) {
     this.activeUserID = new Array();
 
     //init the game, center of the game is (0,0)
-    this.generateFoods(50,getUNIXTimestamp());
+    this.generateFoods(50,0,getUNIXTimestamp());
+    this.generateFoods(10,1,getUNIXTimestamp());
 }
 
 
@@ -112,11 +113,11 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 		//update Score
     	this.updateUserScore(index, posi_x, posi_y, this.score[index]+1, io,timestamp);
         boardcastToAllUser(io,"food_eat_succ",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index,score:this.score[index]});
-        this.generateFood(food_index,getUNIXTimestamp(),io);
+        this.generateFood(food_index,this.food_type[food_index],getUNIXTimestamp(),io);
         HighLog("Eat food succ");
 	}else{
 		//unable to eat
-		    boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index, food_x:this.food_posi[food_index*2],food_y:this.food_posi[food_index*2+1]});
+		boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index, food_x:this.food_posi[food_index*2],food_y:this.food_posi[food_index*2+1]});
         HighLog("Eat food failed due to unable to eat - the position of the food is not in the range of the user");
         HighLog("Distance "+Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))+" ; User Mass: "+this.score[index]);
 	}
@@ -196,7 +197,7 @@ GameBoard.prototype.resetUser = function(index, io,timestamp){
     boardcastToAllUser(io,"user_reset",{index:index,posi_x:posi_x,posi_y:posi_y,score:this.Default_User_Mas});
 };
 
-GameBoard.prototype.generateFoods = function (num,timestamp) {
+GameBoard.prototype.generateFoods = function (num,food_type,timestamp) {
 	//generate the food
     //****
 
@@ -207,20 +208,20 @@ GameBoard.prototype.generateFoods = function (num,timestamp) {
         this.food_posi.push(posi_y);
 
         //generate food type
-        this.food_type.push(0);
+        this.food_type.push(food_type);
         //boardcastToAllUser(io,"food_add",{index:index,posi_x:posi_x,posi_y:posi_y});
     };
 };
 
-GameBoard.prototype.generateFood = function (food_index,timestamp,io) {
+GameBoard.prototype.generateFood = function (food_index,food_type,timestamp,io) {
     //generate the food
     //****
     var posi_x = generate_random_posi(this.width);
     var posi_y = generate_random_posi(this.height);
     this.food_posi[food_index*2]=posi_x;
     this.food_posi[food_index*2+1]=posi_y;
-    this.food_type[food_index]=0;
-    boardcastToAllUser(io,"food_add",{food_index:food_index,posi_x:posi_x,posi_y:posi_y,type:0});
+    this.food_type[food_index]=food_type;
+    boardcastToAllUser(io,"food_add",{food_index:food_index,food_type:food_type,posi_x:posi_x,posi_y:posi_y,type:food_type});
 };
 
 GameBoard.prototype.addUser = function(username,socket,timestamp,io){
@@ -232,7 +233,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     var posi_y = generate_random_posi(this.height);
     var user_name = username;
     this.position.push(posi_x);
-	  this.position.push(posi_y);
+	this.position.push(posi_y);
     this.sockets.push(socket);
     this.name.push(user_name);
     this.speed.push(1);
