@@ -8,6 +8,7 @@ function GameBoard (width,height) {
     this.statusType = ['running','not started'];
     this.Default_User_Mas = 10;
     this.Default_Capture_percent = 0.5;
+    this.REGULAR_UPDATES_RATE = 15;
 
     //for game information
     this.position = new Array();
@@ -15,7 +16,7 @@ function GameBoard (width,height) {
     this.name = [];
     this.speed = [];
     //in redians
-    this.direction = [];
+    this.direction = []; //do NOT delete this line!!(AI needs it)
     this.score = [];
     this.status = [];
     this.rankBoard = [];
@@ -30,6 +31,97 @@ function GameBoard (width,height) {
     this.generateFoods(50,getUNIXTimestamp());
 }
 
+GameBoard.prototype.addAI = function(io){
+	var userCounter=0;
+	for(var i=0; i<this.status.length; i++){
+		if (this.status[i]==this.statusType[0]){
+			userCounter++;
+		}
+	}
+	if(userCounter<=5){
+		this.sockets.push(0);
+		this.name.push("");
+		this.speed.push(0);
+		this.score.push(0);
+		this.status.push("");
+		this.direction.push(0);
+		this.position.push(0);
+		this.position.push(0);
+		AIIndex = this.name.length-1;
+		console.log(AIIndex);
+		console.log(this.position[AIIndex*2]);
+		boardcastToAllUser(io,"User_Add",{index:AIIndex,posi_x:this.position[AIIndex*2],posi_y:this.position[AIIndex*2+1],name:this.name[AIIndex]});
+		this.runAI(AIIndex,io);
+	}
+}
+
+GameBoard.prototype.runAI = function(index,io){
+	this.name[index] = "";
+	this.speed[index] = 3;
+	this.score[index] = 10;
+	this.status[index] = this.statusType[0];
+	this.direction[index] = 0;
+
+	window.setInterval(function () {
+		this.direction[index] = Math.round((Math.random()-0.5)*2*3.14);
+    }, 2000);
+
+    window.setInterval(function () {
+		if(this.speed[index]>1.5){
+			this.speed[index] *= 0.995;
+		} 
+    }, 5000);
+
+	window.setInterval(function () {
+		this.score[index] += 1;
+		boardcastToAllUser(io,"update_score",{index:index, score:this.score[index]});
+    }, 5000);
+
+	window.setInterval(function () {
+		this.AIMove(index, this.speed[index], this.direction[index]);
+    }, this.REGULAR_UPDATES_RATE);
+}
+
+GameBoard.prototype.deleteAI = function(index,io){
+	//TODO: stop AI ruuning
+
+
+	boardcastToAllUser(io,"user_leave",{index:index});
+}
+
+GameBoard.prototype.AIMove = function(index, speed, angle){
+	var isLeft = true;
+    var isRight = true;
+    var isUp = true;
+    var isDown = true;
+    var sin = Math.sin(angle);
+    var cos = Math.cos(angle);
+
+    if(this.position[index*2]<10) isLeft = false;
+    else isLeft = true;
+    if(this.position[index*2]>this.width-10) isRight = false;
+    else isRight = true;
+    if(this.position[index*2+1]<10) isDown = false;
+    else isDown = true;
+    if(this.position[index*2+1]>this.height+10) isUp = false;
+    else isUp = true;
+
+    if(cos<0){
+        if(isRight) this.position[index*2] -= speed * cos;
+        if(sin<0){
+            if(isUp) this.position[index*2+1] -= speed * sin;
+        }else{
+            if(isDown) this.position[index*2+1] -= speed * sin;
+        }
+    }else {
+        if(isLeft) this.position[index*2] -= speed * cos;
+        if(sin<0){
+            if(isUp) this.position[index*2+1] -= speed * sin;
+        }else{
+            if(isDown) this.position[index*2+1] -= speed * sin;
+        }
+    }
+}
 
 //basic fucntions including getters and setters
 GameBoard.prototype.getUserPosition = function(index) {
