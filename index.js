@@ -11,6 +11,9 @@ var gameboard = new Gameboard(MAP_SIZE,MAP_SIZE);
 var sockets = [];
 var PERCENTAGE = 0.9;
 
+var AIStartled = false;
+var AI_STARTLED_DISTANCE = 150;
+
 app.use(express.static(path.join(__dirname,'../2DBlobClient/game')));
 
 app.get('/', function(req, res){
@@ -72,7 +75,7 @@ function addAI(io){
 	}
 	if(userCounter<=5){
 		gameboard.sockets.push(0);
-		gameboard.name.push("");
+		gameboard.name.push("AI");
 		gameboard.speed.push(0);
 		gameboard.score.push(0);
 		gameboard.status.push("");
@@ -87,31 +90,63 @@ function addAI(io){
 }
 
 function runAI(index,io){
-	gameboard.name[index] = "";
+	gameboard.name[index] = "AI";
 	gameboard.speed[index] = 3;
 	gameboard.score[index] = 10;
 	gameboard.status[index] = gameboard.statusType[0];
 	gameboard.direction[index] = 0;
 
+	var nearbyUserIndices = [];
 
 	setInterval(function () {
-		gameboard.direction[index] = Math.round((Math.random()-0.5)*2*3.14);
-    }, 2000);
-
-    setInterval(function () {
-		if(gameboard.speed[index]>1.5){
-			gameboard.speed[index] *= 0.995;
-		} 
-    }, 5000);
+		var para = userDetection(index);
+		nearbyUserIndices = para.userIndices;
+		if(para.userNearby) AIStartled = true;
+		else AIStartled = false;
+	},1000);
 
 	setInterval(function () {
-		gameboard.score[index] += 1;
-		io.emit("update_score",{index:index, score:gameboard.score[index]});
-    }, 5000);
+		if(AIStartled){
+			//speed up
+			gameboard.speed[index] =2;
+			//run away from users
+			gameboard.direction[index] = runAwayFromUsers(index,nearbyUserIndices);
+		}
+		else{
+			//reset speed to unstartled situation
+			gameboard.speed[index] = 0.5;
+			//wandering...
+			gameboard.direction[index] = Math.round((Math.random()-0.5)*2*Math.PI);
+			
+		}
+    }, 1000);
 
 	setInterval(function () {
 		gameboard.AIMove(index, gameboard.speed[index], gameboard.direction[index]);
     }, gameboard.REGULAR_UPDATES_RATE);
+}
+
+function userDetection(index){
+	//gameboard.activeUserID[];
+	var isNearby = false;
+	var nearbyUserIndices = [];
+	var k=0;
+	for(var i=0;i<gameboard.activeUserID.length;i++){
+		if(calDistance(gameboard.position[index*2],gameboard.position[index*2+1],gameboard.position[gameboard.activeUserID[i]*2],gameboard.position[gameboard.activeUserID[i]*2+1])<AI_STARTLED_DISTANCE){
+			nearbyUserIndices[k] = gameboard.activeUserID[i];
+			k++;
+			isNearby = true;
+		}
+	}
+	return {userNearby:isNearby, userIndices: nearbyUserIndices};
+}
+
+function calDistance(ax,ay,bx,by){
+	return Math.pow((Math.pow(ax-bx,2)+Math.pow(ay-by,2)),0.5);
+}
+
+function runAwayFromUsers(inedx,userIndices){
+
 }
 
 function AIMove(index, speed, angle){
@@ -128,7 +163,7 @@ function AIMove(index, speed, angle){
     else isRight = true;
     if(this.position[index*2+1]<10) isDown = false;
     else isDown = true;
-    if(this.position[index*2+1]>this.height+10) isUp = false;
+    if(this.position[index*2+1]>this.height-10) isUp = false;
     else isUp = true;
 
     if(cos<0){
