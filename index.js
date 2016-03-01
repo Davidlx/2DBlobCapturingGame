@@ -116,18 +116,16 @@ function runAI(index,io){
 			//reset speed to unstartled situation
 			gameboard.speed[index] = 0.5;
 			//wandering...
-			gameboard.direction[index] = Math.round((Math.random()-0.5)*2*Math.PI);
-			
+			gameboard.direction[index] = (Math.random()-0.5)*2*Math.PI;
 		}
     }, 1000);
 
 	setInterval(function () {
-		gameboard.AIMove(index, gameboard.speed[index], gameboard.direction[index]);
+		AIMove(index, gameboard.speed[index], gameboard.direction[index]);
     }, gameboard.REGULAR_UPDATES_RATE);
 }
 
 function userDetection(index){
-	//gameboard.activeUserID[];
 	var isNearby = false;
 	var nearbyUserIndices = [];
 	var k=0;
@@ -145,6 +143,12 @@ function calDistance(ax,ay,bx,by){
 	return Math.pow((Math.pow(ax-bx,2)+Math.pow(ay-by,2)),0.5);
 }
 
+
+function calAngle(ax,ay,bx,by){
+	return Math.atan2(by-ay,bx-ax);
+	
+}
+
 function runAwayFromUsers(inedx,userIndices){
 
 }
@@ -154,31 +158,31 @@ function AIMove(index, speed, angle){
     var isRight = true;
     var isUp = true;
     var isDown = true;
-    var sin = Math.sin(angle);
-    var cos = Math.cos(angle);
+    var yray = Math.sin(angle);
+    var xray = Math.cos(angle);
 
-    if(this.position[index*2]<10) isLeft = false;
+    if(gameboard.position[index*2]<10) isLeft = false;
     else isLeft = true;
-    if(this.position[index*2]>this.width-10) isRight = false;
+    if(gameboard.position[index*2]>gameboard.width-10) isRight = false;
     else isRight = true;
-    if(this.position[index*2+1]<10) isDown = false;
+    if(gameboard.position[index*2+1]<10) isDown = false;
     else isDown = true;
-    if(this.position[index*2+1]>this.height-10) isUp = false;
+    if(gameboard.position[index*2+1]>gameboard.height-10) isUp = false;
     else isUp = true;
 
-    if(cos<0){
-        if(isRight) this.position[index*2] -= speed * cos;
-        if(sin<0){
-            if(isUp) this.position[index*2+1] -= speed * sin;
+    if(xray>0){
+        if(isRight) gameboard.position[index*2] += speed * xray;
+        if(yray>0){
+            if(isUp) gameboard.position[index*2+1] += speed * yray;
         }else{
-            if(isDown) this.position[index*2+1] -= speed * sin;
+            if(isDown) gameboard.position[index*2+1] += speed * yray;
         }
     }else {
-        if(isLeft) this.position[index*2] -= speed * cos;
-        if(sin<0){
-            if(isUp) this.position[index*2+1] -= speed * sin;
+        if(isLeft) gameboard.position[index*2] += speed * xray;
+        if(yray>0){
+            if(isUp) gameboard.position[index*2+1] += speed * yray;
         }else{
-            if(isDown) this.position[index*2+1] -= speed * sin;
+            if(isDown) gameboard.position[index*2+1] += speed * yray;
         }
     }
 }
