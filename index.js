@@ -150,7 +150,29 @@ function calAngle(ax,ay,bx,by){
 }
 
 function runAwayFromUsers(inedx,userIndices){
+	if(userIndices.length==1){
 
+	}
+	else{
+
+
+		if(userIndices.length>2){
+
+		}
+	}
+
+}
+
+//input: angle_c, a, b
+//output: angle_ACD, 2*d
+function calVector(angle,a,b){
+	var c = Math.pow((Math.pow(a,2)+Math.pow(b,2)-2*a*b*Math.cos(angle)),0.5);
+	var angle_a = (Math.pow(b,2)+Math.pow(c,2)-Math.pow(a,2))/(2*b*c);
+	var d = Math.pow((Math.pow(b,2)+Math.pow(0.5*c,2)-2*b*0.5*c*Math.cos(angle_a)),0.5);
+
+	var v_angle = Math.acos((Math.pow(b,2)+Math.pow(d,2)-Math(0.5*c,2))/(2*b*d));
+	var v_length = 2*d;
+	return {angle:v_angle, length:v_length};
 }
 
 function AIMove(index, speed, angle){
