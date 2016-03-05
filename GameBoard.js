@@ -29,6 +29,7 @@ function GameBoard (width,height) {
     //init the game, center of the game is (0,0)
     this.generateFoods(50,0,getUNIXTimestamp());
     this.generateFoods(10,1,getUNIXTimestamp());
+    this.generateFoods(10,2,getUNIXTimestamp());
 }
 
 
