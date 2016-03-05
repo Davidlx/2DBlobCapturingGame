@@ -14,6 +14,7 @@ function GameBoard (width,height) {
     this.sockets = [];
     this.name = [];
     this.speed = [];
+    //this.scale = [];
     //in redians
     this.direction = [];
     this.score = [];
@@ -30,6 +31,7 @@ function GameBoard (width,height) {
     this.generateFoods(50,0,getUNIXTimestamp());
     this.generateFoods(10,1,getUNIXTimestamp());
     this.generateFoods(10,2,getUNIXTimestamp());
+    this.generateFoods(10,3,getUNIXTimestamp());
 }
 
 
@@ -213,6 +215,7 @@ GameBoard.prototype.resetUser = function(index, io,timestamp){
     var posi_y = generate_random_posi(this.height);
     this.updateUserPosition(index, RANDOM_X, RANDOM_Y, io,timestamp);
     this.updateUserSpeed(index, posi_x, posi_y, 0, io,timestamp);
+    //this.updateUserScale(index, posi_x, posi_y, 0, io,timestamp);
     this.updateUserScore(index, posi_x, posi_y, this.Default_User_Mas, io,timestamp);
     this.updateUserStatus(index, posi_x, posi_y, this.statusType[0], io,timestamp);
 
@@ -259,6 +262,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     this.sockets.push(socket);
     this.name.push(user_name);
     this.speed.push(1);
+    //this.scale.push(1);
     this.direction.push(0);
     this.score.push(this.Default_User_Mas);
     this.status.push(this.statusType[0]);
