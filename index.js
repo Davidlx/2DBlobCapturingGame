@@ -13,6 +13,9 @@ var PERCENTAGE = 0.9;
 
 var AIStartled = false;
 var AI_STARTLED_DISTANCE = 250;
+var AI_Interval_ID = [];
+var AI_Interval_Move_ID = [];
+
 
 app.use(express.static(path.join(__dirname,'../2DBlobClient/game')));
 
@@ -98,7 +101,7 @@ function runAI(index,io){
 
 	var nearestUserIndex = -1;
 
-	setInterval(function () {
+	var temp_ID = setInterval(function () {
 		if(gameboard.activeUserID.length>0){
 			var para = userDetection(index);
 			nearestUserIndex = para.userIndex;
@@ -119,9 +122,13 @@ function runAI(index,io){
 		}
 	},1000);
 
-	setInterval(function () {
+  AI_Interval_ID[index] = temp_ID;
+
+	temp_ID = setInterval(function () {
 		AIMove(index, gameboard.speed[index], gameboard.direction[index]);
     }, gameboard.REGULAR_UPDATES_RATE);
+
+    AI_Interval_Move_ID[index] = temp_ID;
 }
 
 function userDetection(index){
@@ -138,7 +145,6 @@ function userDetection(index){
 				isNearby = true;
 			}
 		}
-		
 	}
 	return {userNearby:isNearby, userIndex: nearestUserIndex};
 }
@@ -150,7 +156,6 @@ function calDistance(ax,ay,bx,by){
 
 function calAngle(ax,ay,bx,by){
 	return Math.atan2(by-ay,bx-ax);
-	
 }
 
 function runAwayFromUsers(index,nearestUserIndex){
@@ -211,7 +216,8 @@ function AIMove(index, speed, angle){
 function deleteAI(index,io){
 	//TODO: stop AI ruuning
 
-
+  clearInterval(AI_Interval_ID[index]);
+  clearInterval(AI_Interval_Move_ID[index]);
 	io.emit("user_leave",{index:index});
 }
 
