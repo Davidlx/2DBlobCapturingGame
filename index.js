@@ -12,7 +12,7 @@ var sockets = [];
 var PERCENTAGE = 0.9;
 
 var AIStartled = false;
-var AI_STARTLED_DISTANCE = 150;
+var AI_STARTLED_DISTANCE = 250;
 
 app.use(express.static(path.join(__dirname,'../2DBlobClient/game')));
 
@@ -75,7 +75,7 @@ function addAI(io){
 	}
 	if(userCounter<=5){
 		gameboard.sockets.push(0);
-		gameboard.name.push("AI");
+		gameboard.name.push("");
 		gameboard.speed.push(0);
 		gameboard.score.push(0);
 		gameboard.status.push("");
@@ -96,21 +96,20 @@ function runAI(index,io){
 	gameboard.status[index] = gameboard.statusType[0];
 	gameboard.direction[index] = 0;
 
-	var nearbyUserIndices = [];
+	var nearestUserIndex = -1;
 
 	setInterval(function () {
-		var para = userDetection(index);
-		nearbyUserIndices = para.userIndices;
-		if(para.userNearby) AIStartled = true;
-		else AIStartled = false;
-	},1000);
-
-	setInterval(function () {
+		if(gameboard.activeUserID.length>0){
+			var para = userDetection(index);
+			nearestUserIndex = para.userIndex;
+			if(para.userNearby) AIStartled = true;
+			else AIStartled = false;
+		}
 		if(AIStartled){
 			//speed up
-			gameboard.speed[index] =2;
+			gameboard.speed[index] =2.8;
 			//run away from users
-			gameboard.direction[index] = runAwayFromUsers(index,nearbyUserIndices);
+			gameboard.direction[index] = runAwayFromUsers(index,nearestUserIndex);
 		}
 		else{
 			//reset speed to unstartled situation
@@ -118,7 +117,7 @@ function runAI(index,io){
 			//wandering...
 			gameboard.direction[index] = (Math.random()-0.5)*2*Math.PI;
 		}
-    }, 1000);
+	},1000);
 
 	setInterval(function () {
 		AIMove(index, gameboard.speed[index], gameboard.direction[index]);
@@ -127,16 +126,21 @@ function runAI(index,io){
 
 function userDetection(index){
 	var isNearby = false;
-	var nearbyUserIndices = [];
-	var k=0;
+	var nearestUserIndex;
+	var nearestDistance = AI_STARTLED_DISTANCE;
+	var dist;
 	for(var i=0;i<gameboard.activeUserID.length;i++){
-		if(calDistance(gameboard.position[index*2],gameboard.position[index*2+1],gameboard.position[gameboard.activeUserID[i]*2],gameboard.position[gameboard.activeUserID[i]*2+1])<AI_STARTLED_DISTANCE){
-			nearbyUserIndices[k] = gameboard.activeUserID[i];
-			k++;
-			isNearby = true;
+		if(gameboard.activeUserID[i]!=index){
+			dist = calDistance(gameboard.position[index*2],gameboard.position[index*2+1],gameboard.position[gameboard.activeUserID[i]*2],gameboard.position[gameboard.activeUserID[i]*2+1]);
+			if(dist<AI_STARTLED_DISTANCE && dist<nearestDistance){
+				nearestDistance = dist;
+				nearestUserIndex = gameboard.activeUserID[i];
+				isNearby = true;
+			}
 		}
+		
 	}
-	return {userNearby:isNearby, userIndices: nearbyUserIndices};
+	return {userNearby:isNearby, userIndex: nearestUserIndex};
 }
 
 function calDistance(ax,ay,bx,by){
@@ -149,18 +153,13 @@ function calAngle(ax,ay,bx,by){
 	
 }
 
-function runAwayFromUsers(inedx,userIndices){
-	if(userIndices.length==1){
-
+function runAwayFromUsers(index,nearestUserIndex){
+	var angle = calAngle(gameboard.position[index*2],gameboard.position[index*2+1],gameboard.position[nearestUserIndex*2],gameboard.position[nearestUserIndex*2+1]);
+	var op_direc = angle - Math.PI;
+	if(op_direc< -Math.PI){
+		op_direc += 2 * Math.PI;
 	}
-	else{
-
-
-		if(userIndices.length>2){
-
-		}
-	}
-
+	return op_direc;
 }
 
 //input: angle_c, a, b
@@ -172,7 +171,7 @@ function calVector(angle,a,b){
 
 	var v_angle = Math.acos((Math.pow(b,2)+Math.pow(d,2)-Math(0.5*c,2))/(2*b*d));
 	var v_length = 2*d;
-	return {angle:v_angle, length:v_length};
+	return v_angle;
 }
 
 function AIMove(index, speed, angle){
