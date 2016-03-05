@@ -30,6 +30,7 @@ function GameBoard (width,height) {
     this.generateFoods(50,0,getUNIXTimestamp());
     this.generateFoods(10,1,getUNIXTimestamp());
     this.generateFoods(10,2,getUNIXTimestamp());
+    this.generateFoods(10,3,getUNIXTimestamp());
 }
 
 
@@ -137,6 +138,8 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
         if(this.food_type[food_index] == 2)
         {
             boardcastToAUser(io, "speed_up_succ", {index:index});
+        }else if(this.food_type[food_index] == 3){
+            boardcastToAUser(io, "shrink", {index:index});
         }
 	}else{
 		//unable to eat
