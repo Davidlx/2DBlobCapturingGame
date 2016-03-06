@@ -182,7 +182,7 @@ function runAwayFromUsers(index,nearestUserIndex){
 }
 
 
-function towardsWall(index){
+function towardsWall(index, op_direc){
   if (gameboard.position[index*2]<50 && (op_direc>(Math.PI/2)||op_direc<(-Math.PI/2))) {
     return true;
   }else if (gameboard.position[index*2]>(gameboard.width-50) && ((op_direc<(Math.PI/2) && op_direc > 0) || op_direc > (-Math.PI/2))) {
