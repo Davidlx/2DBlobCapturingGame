@@ -168,12 +168,17 @@ function runAwayFromUsers(index,nearestUserIndex){
   if (towardsWall(index,op_direc)) {
     //escape from the wall
     if (gameboard.position[index*2]<50 && (op_direc>(Math.PI/2)||op_direc<(-Math.PI/2))) {
+      console.log("towards left");
       return 0;
+
     }else if (gameboard.position[index*2]>(gameboard.width-50) && ((op_direc<(Math.PI/2) && op_direc > 0) || op_direc > (-Math.PI/2))) {
+      console.log("towards Right");
       return -Math.PI;
     }else if (gameboard.position[index*2+1]<50 && op_direc < 0) {
+      console.log("towards bottom");
       return Math.PI/2;
-    }else if (gameboard.position[index*2+1]<(gameboard.height-50) && op_direc > 0) {
+    }else if (gameboard.position[index*2+1]>(gameboard.height-50) && op_direc > 0) {
+      console.log("towards top");
       return -Math.PI/2;;
     }
   }
@@ -182,7 +187,7 @@ function runAwayFromUsers(index,nearestUserIndex){
 }
 
 
-function towardsWall(index){
+function towardsWall(index,op_direc){
   if (gameboard.position[index*2]<50 && (op_direc>(Math.PI/2)||op_direc<(-Math.PI/2))) {
     return true;
   }else if (gameboard.position[index*2]>(gameboard.width-50) && ((op_direc<(Math.PI/2) && op_direc > 0) || op_direc > (-Math.PI/2))) {
