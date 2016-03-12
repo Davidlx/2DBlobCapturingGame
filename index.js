@@ -169,21 +169,31 @@ function runAwayFromUsers(index,nearestUserIndex){
     //escape from the wall
     if (gameboard.position[index*2]<50 && (op_direc>(Math.PI/2)||op_direc<(-Math.PI/2))) {
       console.log("towards left");
-      return 0;
+      return getRandomArbitrary(-Math.PI/2,Math.PI/2);
 
     }else if (gameboard.position[index*2]>(gameboard.width-50) && ((op_direc<(Math.PI/2) && op_direc > 0) || op_direc > (-Math.PI/2))) {
       console.log("towards Right");
-      return -Math.PI;
+      return getRandomArbitrary(Math.PI/2,Math.PI);
     }else if (gameboard.position[index*2+1]<50 && op_direc < 0) {
       console.log("towards bottom");
-      return Math.PI/2;
+      return getRandomArbitrary(0,Math.PI);
     }else if (gameboard.position[index*2+1]>(gameboard.height-50) && op_direc > 0) {
       console.log("towards top");
-      return -Math.PI/2;;
+      return getRandomArbitrary(-Math.PI,0);
     }
   }
 
+  var threashHold = getRandomArbitrary(0,1);
+  //getRandomArbitrary(-Math.PI,Math.PI);
+  if (threashHold>=0.6){
+    return getRandomArbitrary(-Math.PI,Math.PI);
+  }
+
 	return op_direc;
+}
+
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
 }
 
 function towardsWall(index,op_direc){
