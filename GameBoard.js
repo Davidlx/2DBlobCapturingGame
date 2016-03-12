@@ -8,6 +8,7 @@ function GameBoard (width,height) {
     this.statusType = ['running','not started'];
     this.Default_User_Mas = 10;
     this.Default_Capture_percent = 0.5;
+    this.REGULAR_UPDATES_RATE = 15;
 
     //for game information
     this.position = new Array();
@@ -16,7 +17,7 @@ function GameBoard (width,height) {
     this.speed = [];
     //this.scale = [];
     //in redians
-    this.direction = [];
+    this.direction = []; //do NOT delete this line!!(AI needs it)
     this.score = [];
     this.status = [];
     this.rankBoard = [];
@@ -33,7 +34,6 @@ function GameBoard (width,height) {
     this.generateFoods(10,2,getUNIXTimestamp());
     this.generateFoods(10,3,getUNIXTimestamp());
 }
-
 
 //basic fucntions including getters and setters
 GameBoard.prototype.getUserPosition = function(index) {
