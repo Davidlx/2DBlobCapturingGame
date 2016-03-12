@@ -186,7 +186,7 @@ function runAwayFromUsers(index,nearestUserIndex){
   var threashHold = getRandomArbitrary(0,1);
   //getRandomArbitrary(-Math.PI,Math.PI);
   if (threashHold>=0.6){
-    return getRandomArbitrary(-Math.PI,Math.PI);
+    return getRandomArbitrary(op_direc-Math.PI/2,op_direc+Math.PI/2);
   }
 
 	return op_direc;
