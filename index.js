@@ -58,9 +58,13 @@ io.on('connection',function(socket){
 		//emit
 	});
 
-	socket.on('eat_user', function(index, posi_x,posi_y,user_index,timestamp){
-		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,io,timestamp);
+	socket.on('eat_user', function(index, posi_x,posi_y,user_index,scale1,scale2,timestamp){
+		gameboard.userCapturingUser(index, posi_x,posi_y,user_index,scale1,scale2,io,timestamp);
 	});
+
+  socket.on('update_scale', function(index, scale, timestamp){
+    gameboard.updateScale(index, scale, io, timestamp);
+  });
 
   setInterval(function() {
     //console.log("update all user location");

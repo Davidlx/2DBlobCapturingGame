@@ -153,7 +153,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 	}
 };
 
-GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_index,io,timestamp) {
+GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_index,scale1,scale2,io,timestamp) {
 
 	//similar to userEatFood, but need to inform the eaten user.
     LowLog("User Capturing User: "+this.position[user_index*2]+" "+this.position[user_index*2+1]+" user: "+this.position[index*2]+" "+this.position[index*2+1]);
@@ -170,7 +170,7 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
     var posi__x = this.position[user_index*2];
     var posi__y = this.position[user_index*2+1];
 
-    if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]&&this.status[user_index]!=this.statusType[1]) {
+    if (scale1>scale2 && this.status[user_index]!=this.statusType[1]) {
         //validation complete, prepare to eat.
         if(this.status[user_index] = this.statusType[2]){
           this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.AI_BONUS_SCORE,io,timestamp);
@@ -188,6 +188,11 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
         HighLog("Capturing User failed due to user score is not big enough");
     }
 };
+
+GameBoard.prototype.updateScale = function(index, scale, io, timestamp){
+  boardcastToAUser(io, 'scale_update', {index:index, scale:scale});
+};
+
 
 GameBoard.prototype.userDisconnect = function(socket,io){
     HighLog("User Disconnect");
