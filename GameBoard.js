@@ -5,10 +5,11 @@ function GameBoard (width,height) {
     this.width = width;
     this.height = height;
     this.io = io;
-    this.statusType = ['running','not started'];
+    this.statusType = ['running','not started','AI'];
     this.Default_User_Mas = 10;
     this.Default_Capture_percent = 0.5;
     this.REGULAR_UPDATES_RATE = 15;
+    this.AI_BONUS_SCORE = 10;
 
     //for game information
     this.position = new Array();
@@ -169,9 +170,15 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
     var posi__x = this.position[user_index*2];
     var posi__y = this.position[user_index*2+1];
 
-    if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]&&this.status[user_index]==this.statusType[0]) {
+    if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]&&this.status[user_index]!=this.statusType[1]) {
         //validation complete, prepare to eat.
-        this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.Default_Capture_percent*this.score[user_index],io,timestamp);
+        if(this.status = this.statusType[2]){
+          this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.AI_BONUS_SCORE,io,timestamp);
+        }
+        else{
+          this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.Default_Capture_percent*this.score[user_index],io,timestamp);
+        }
+
         boardcastToAllUser(io,"user_eat_succ",{index:index,user_index:user_index,posi_x:posi_x,posi_y:posi_y,score:this.score[index]});
         this.deleteUser(user_index,io);
     }else{
@@ -275,7 +282,7 @@ GameBoard.prototype.addUser = function(username,socket,timestamp,io){
     this.activeUserID.push(index);
     //more info
     boardcastToAUser(socket,"game_init_info",{position:this.position,name:this.name,speed:this.speed,direction:this.direction,score:this.score,status:this.status,rankboard:this.rankBoard, food:this.food_posi, food_type:this.food_type});
-    boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:user_name});
+    boardcastToAllUser(io,"User_Add",{index:index,posi_x:posi_x,posi_y:posi_y,name:user_name,ai:false});
 };
 
 GameBoard.prototype.activateUser = function(index,timestamp,io){

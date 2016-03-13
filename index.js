@@ -70,33 +70,33 @@ io.on('connection',function(socket){
 });
 
 function addAI(io){
-	var userCounter=0;
+	var AICounter=0;
 	for(var i=0; i<gameboard.status.length; i++){
-		if (gameboard.status[i]==gameboard.statusType[0]){
-			userCounter++;
+		if (gameboard.status[i]==gameboard.statusType[2]){
+			AICounter++;
 		}
 	}
-	if(userCounter<=5){
+	if(AICounter==0){
 		gameboard.sockets.push(0);
 		gameboard.name.push("");
 		gameboard.speed.push(0);
 		gameboard.score.push(0);
-		gameboard.status.push("");
+		gameboard.status.push(gameboard.statusType[2]);
 		gameboard.direction.push(0);
-		gameboard.position.push(200);
-		gameboard.position.push(200);
+		gameboard.position.push(Math.round(Math.random()*MAP_SIZE));
+		gameboard.position.push(Math.round(Math.random()*MAP_SIZE));
 		AIIndex = gameboard.name.length-1;
 		gameboard.activeUserID.push(AIIndex);
-		io.emit("User_Add",{index:AIIndex,posi_x:gameboard.position[AIIndex*2],posi_y:gameboard.position[AIIndex*2+1],name:gameboard.name[AIIndex]});
+		io.emit("User_Add",{index:AIIndex,posi_x:gameboard.position[AIIndex*2],posi_y:gameboard.position[AIIndex*2+1],name:gameboard.name[AIIndex], ai:true});
 		runAI(AIIndex,io);
 	}
 }
 
 function runAI(index,io){
-	gameboard.name[index] = "AI";
+	gameboard.name[index] = "";
 	gameboard.speed[index] = 3;
 	gameboard.score[index] = 10;
-	gameboard.status[index] = gameboard.statusType[0];
+	gameboard.status[index] = gameboard.statusType[2];
 	gameboard.direction[index] = 0;
 
 	var nearestUserIndex = -1;
@@ -116,7 +116,7 @@ function runAI(index,io){
 		}
 		else{
 			//reset speed to unstartled situation
-			gameboard.speed[index] = 0.5;
+			gameboard.speed[index] = 1.5;
 			//wandering...
 			gameboard.direction[index] = (Math.random()-0.5)*2*Math.PI;
 		}
@@ -250,7 +250,9 @@ function deleteAI(index,io){
 
   clearInterval(AI_Interval_ID[index]);
   clearInterval(AI_Interval_Move_ID[index]);
+  gameboard.status[index] = gameboard.statusType[1];
 	io.emit("user_leave",{index:index});
+  addAI(io);
 }
 
 
