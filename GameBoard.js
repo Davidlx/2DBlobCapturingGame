@@ -113,7 +113,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
 	var food_x = this.food_posi[food_index*2];
 	var food_y = this.food_posi[food_index*2+1];
 	if (Math.sqrt(Math.pow((food_x-posi_x),2)+Math.pow((food_y-posi_y),2))<=this.score[index]+1) {
-		
+
         if(this.food_type[food_index] == 2)
         {
             if((this.score[index]/2) < 10)
@@ -122,7 +122,7 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
             }
             else
             {
-                this.score[index] = (this.score[index] / 2)|0;   
+                this.score[index] = (this.score[index] / 2)|0;
             }
         }
         else
@@ -135,6 +135,14 @@ GameBoard.prototype.userEatFood = function (index, posi_x,posi_y,food_index,io,t
         boardcastToAllUser(io,"food_eat_succ",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index, food_type: this.food_type[food_index],score:this.score[index]});
         this.generateFood(food_index,this.food_type[food_index],getUNIXTimestamp(),io);
         HighLog("Eat food succ");
+
+
+        if(this.food_type[food_index] == 2)
+        {
+            boardcastToAUser(io, "speed_up_succ", {index:index});
+        }else if(this.food_type[food_index] == 3){
+            boardcastToAUser(io, "shrink", {index:index});
+        }
 	}else{
 		//unable to eat
 		boardcastToAUser(this.sockets[index],"food_eat_fail",{index:index,posi_x:posi_x,posi_y:posi_y,food_index: food_index, food_x:this.food_posi[food_index*2],food_y:this.food_posi[food_index*2+1]});
