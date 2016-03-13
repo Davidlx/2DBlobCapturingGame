@@ -172,8 +172,9 @@ GameBoard.prototype.userCapturingUser = function (index, posi_x,posi_y,user_inde
 
     if (calculateDistance(posi_x,posi_y,posi__x,posi__y)+this.score[user_index]<=this.score[index]&&this.status[user_index]!=this.statusType[1]) {
         //validation complete, prepare to eat.
-        if(this.status = this.statusType[2]){
+        if(this.status[user_index] = this.statusType[2]){
           this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.AI_BONUS_SCORE,io,timestamp);
+          this.status[user_index] = this.statusType[1];
         }
         else{
           this.updateUserScore(index,posi_x,posi_y,this.score[index]+this.Default_Capture_percent*this.score[user_index],io,timestamp);

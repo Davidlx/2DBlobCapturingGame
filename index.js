@@ -129,6 +129,15 @@ function runAI(index,io){
     }, gameboard.REGULAR_UPDATES_RATE);
 
     AI_Interval_Move_ID[index] = temp_ID;
+
+    temp_ID = setInterval(function () {
+  		if(gameboard.status[index] == gameboard.statusType[1]){
+        deleteAI(index,io);
+        clearInterval(temp_ID);
+      }
+    }, gameboard.REGULAR_UPDATES_RATE);
+
+
 }
 
 function userDetection(index){
@@ -216,8 +225,8 @@ function AIMove(index, speed, angle){
     var isRight = true;
     var isUp = true;
     var isDown = true;
-    var yray = Math.sin(angle);
-    var xray = Math.cos(angle);
+    var y = Math.sin(angle);
+    var x = Math.cos(angle);
 
     if(gameboard.position[index*2]<10) isLeft = false;
     else isLeft = true;
@@ -228,19 +237,19 @@ function AIMove(index, speed, angle){
     if(gameboard.position[index*2+1]>gameboard.height-10) isUp = false;
     else isUp = true;
 
-    if(xray>0){
-        if(isRight) gameboard.position[index*2] += speed * xray;
-        if(yray>0){
-            if(isUp) gameboard.position[index*2+1] += speed * yray;
+    if(x>0){
+        if(isRight) gameboard.position[index*2] += speed * x;
+        if(y>0){
+            if(isUp) gameboard.position[index*2+1] += speed * y;
         }else{
-            if(isDown) gameboard.position[index*2+1] += speed * yray;
+            if(isDown) gameboard.position[index*2+1] += speed * y;
         }
     }else {
-        if(isLeft) gameboard.position[index*2] += speed * xray;
-        if(yray>0){
-            if(isUp) gameboard.position[index*2+1] += speed * yray;
+        if(isLeft) gameboard.position[index*2] += speed * x;
+        if(y>0){
+            if(isUp) gameboard.position[index*2+1] += speed * y;
         }else{
-            if(isDown) gameboard.position[index*2+1] += speed * yray;
+            if(isDown) gameboard.position[index*2+1] += speed * y;
         }
     }
 }
@@ -250,7 +259,6 @@ function deleteAI(index,io){
 
   clearInterval(AI_Interval_ID[index]);
   clearInterval(AI_Interval_Move_ID[index]);
-  gameboard.status[index] = gameboard.statusType[1];
 	io.emit("user_leave",{index:index});
   addAI(io);
 }
