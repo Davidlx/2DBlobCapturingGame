@@ -389,11 +389,11 @@ function calculateDistance(x,y,X,Y){
 }
 
 function boardcastToAllUser(io,tag,para){
-    io.emit(tag,para);
+    //io.emit(tag,para);
 }
 
 function boardcastToAUser(socket,tag,para){
-    socket.emit(tag,para);
+    //socket.emit(tag,para);
 }
 
 function generate_random_posi(range){
