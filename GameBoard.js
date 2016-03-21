@@ -91,7 +91,7 @@ GameBoard.prototype.updateUserScore = function(index, posi_x, posi_y,score,io,ti
     	}
     }
     boardcastToAllUser(io,"score_update",{index:index,score:score});
-    io.emit('update score', index, score);
+    //io.emit('update score', index, score);
 }
 
 

@@ -28,54 +28,74 @@ var AI_Interval_Move_ID = [];
 //Started to Test
 
 //Adding users
-console.log("Testing adding/deleting User");
+console.log("Testing adding/deleting User\n");
 gameboard.addUser("test1",null,getUNIXTimestamp,null);
 test.assert(gameboard.name[0]=="test1");
+console.log("Test Case: Adding the first user");
 gameboard.addUser("test2",null,getUNIXTimestamp,null);
 test.assert(gameboard.name[0]=="test1");
 test.assert(gameboard.name[1]=="test2");
+console.log("Test Case: Adding the second user and see if the logic stands");
 
 gameboard.deleteUser(0,null);
 test.assert(gameboard.status[0]==gameboard.statusType[1]);
+console.log("Test Case: Delete the user and see if the status changed");
 gameboard.deleteUser(1,null);
 test.assert(gameboard.status[1]==gameboard.statusType[1]);
+console.log("Test Case: Delete the user and see if the status changed");
 
 gameboard.addUser("test1",null,getUNIXTimestamp,null);
 test.assert(gameboard.name[2]=="test1");
-console.log("Conplete!\n");
+console.log("Test Case: Add a user after deleting");
+console.log("=========");
+console.log("Complete!\n");
 
 // Test on update position
-console.log("Testing updating position");
+console.log("Testing updating position\n");
 gameboard.updateUserPosition(2, 0, 0,null,getUNIXTimestamp());
 test.assert(gameboard.position[4]==0);
 test.assert(gameboard.position[5]==0);
+console.log("Test Case: Location updates case 1");
 gameboard.updateUserPosition(2, 0, 1,null,getUNIXTimestamp());
 test.assert(gameboard.position[4]==0);
 test.assert(gameboard.position[5]==1);
+console.log("Test Case: Location updates case 2");
 gameboard.updateUserPosition(2, 1, 0,null,getUNIXTimestamp());
 test.assert(gameboard.position[4]==1);
 test.assert(gameboard.position[5]==0);
+console.log("Test Case: Location updates case 3");
 gameboard.updateUserPosition(2, 1, 0,null,getUNIXTimestamp());
 test.assert(gameboard.position[4]==1);
 test.assert(gameboard.position[5]==0);
-console.log("Conplete!\n");
+console.log("Test Case: Location updates case 4");
+console.log("=========");
+console.log("Complete!\n");
 
 // Test on food_eat
-console.log("Testing user eat food");
+console.log("Testing user eat food\n");
 var tmpScore = gameboard.score[2];
 var foodNum = gameboard.food_posi.length/2;
-gameboard.userEatFood(2, 1, 0,0,null,getUNIXTimestamp());
+gameboard.userEatFood(2, 0, 0,0,null,getUNIXTimestamp());
 test.assert(gameboard.score[2]==tmpScore);
-
+console.log("Test Case: Simulate the unsuccessful eating situation");
 gameboard.updateUserPosition(2, gameboard.food_posi[0], gameboard.food_posi[1],null,getUNIXTimestamp());
-test.assert(gameboard.score[2]==tmpScore);
+gameboard.userEatFood(2, gameboard.position[4],gameboard.position[5],0,null,getUNIXTimestamp());
+test.assert(gameboard.score[2]==(tmpScore+1));
+console.log("Test Case: simulating the successful eating situation");
 
 test.assert(gameboard.food_posi.length/2 == foodNum);
-console.log("Conplete!\n");
+console.log("Test Case: testing the food number remains the same after eating");
+console.log("=========");
+console.log("Complete!\n");
 
 //Testing User Eat User
-console.log("Testing user eat user");
+console.log("Testing user eat user\n");
 
+gameboard.addUser("test1",null,getUNIXTimestamp,null);
+
+
+console.log("=========");
+console.log("Complete!\n");
 
 // the end of the test
 console.log("You have finished all the test");
