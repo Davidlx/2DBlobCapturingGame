@@ -91,14 +91,30 @@ console.log("Complete!\n");
 //Testing User Eat User
 console.log("Testing user eat user\n");
 
-gameboard.addUser("test1",null,getUNIXTimestamp,null);
+gameboard.addUser("test3",null,getUNIXTimestamp,null);
+gameboard.updateUserPosition(3, gameboard.position[4]+10,gameboard.position[5]+10,null,getUNIXTimestamp());
+gameboard.userCapturingUser(2, gameboard.position[4],gameboard.position[5],3,1,2,null,getUNIXTimestamp());
+test.assert(gameboard.status[3]==gameboard.statusType[0]);
+console.log("Test Case: simulating the wrong eating condition (Wrong location and wrong scale)");
 
+gameboard.updateUserPosition(3, gameboard.position[4],gameboard.position[5],null,getUNIXTimestamp());
+gameboard.userCapturingUser(2, gameboard.position[4],gameboard.position[5],3,1,2,null,getUNIXTimestamp());
+test.assert(gameboard.status[3]==gameboard.statusType[0]);
+console.log("Test Case: simulating the wrong eating condition (Wrong scale)");
 
+gameboard.updateUserPosition(3, gameboard.position[4],gameboard.position[5],null,getUNIXTimestamp());
+gameboard.userCapturingUser(2, gameboard.position[4],gameboard.position[5],3,2,1,null,getUNIXTimestamp());
+test.assert(gameboard.status[3]==gameboard.statusType[1]);
+console.log("Test Case: simulating the correct eating condition");
 console.log("=========");
 console.log("Complete!\n");
 
 // the end of the test
-console.log("You have finished all the test");
+console.log("You have finished all the test for the server logic part.\n\n");
+
+console.log("Here is the test for AI part.");
+
+
 // Common fucntions
 function getUNIXTimestamp(){
     return Math.floor(Date.now());//change the server accordingly.
