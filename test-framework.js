@@ -110,12 +110,27 @@ console.log("=========");
 console.log("Complete!\n");
 
 // the end of the test
-console.log("You have finished all the test for the server logic part.\n\n");
+console.log("You have finished all the test for the server logic part.\n");
 
 console.log("Here is the test for AI part.\n");
 
 // Testing adding AI
-console.log("Test case: Getting user direction\n");
+console.log("Testing getting user direction\n");
+// sumilate an AI
+gameboard.addUser("AI",null,getUNIXTimestamp(),null);
+gameboard.updateUserPosition(4, gameboard.position[4]+AI_STARTLED_DISTANCE,gameboard.position[5],null,getUNIXTimestamp());
+var dir = userDetection(4);
+test.assert(dir.userNearby == false);
+console.log("Test Case: simulate not near by situation --- Passed");
+
+gameboard.updateUserPosition(4, gameboard.position[4]+AI_STARTLED_DISTANCE/2,gameboard.position[5],null,getUNIXTimestamp());
+var dir = userDetection(4);
+test.assert(dir.userNearby == true);
+test.assert(dir.userIndex = 2);
+console.log("Test Case: simulate is near by situation --- Passed");
+console.log("Test Case: returned the right user --- Passed");
+
+
 
 
 // Common fucntions
