@@ -218,3 +218,130 @@ function calVector(angle,a,b){
 	var v_length = 2*d;
 	return v_angle;
 }
+
+
+	/* Test for Client Side */
+	console.log ("\n\n");
+	console.log("Begin testing for client side");
+	console.log("=============================\n\n");
+	var food = [];
+	var food_posi_x = [];
+	var food_posi_y = [];
+
+    //Adding food test
+    console.log("Testing adding food");
+    addFoodOnMap(0, 0, 0, 0);
+    test.assert(food[0] == "normalFood");
+    test.assert(food_posi_x[0] == 0);
+    test.assert(food_posi_y[0] == 0);
+    console.log("Adding first food");
+    addFoodOnMap(1, 1, 10, 50);
+    test.assert(food[0] == "normalFood");
+    test.assert(food_posi_x[0] == 0);
+    test.assert(food_posi_y[0] == 0);
+    test.assert(food[1] == "speedup");
+    test.assert(food_posi_x[1] == 10);
+    test.assert(food_posi_y[1] == 50);
+    console.log("Adding second food");
+    console.log("Test Case: Add foods on map");
+	console.log("=========");
+	console.log("Complete!\n");
+
+	//Collision detection test
+	console.log("Testing collision detection");
+	test.assert(collisionDetection(5, 0, 0, 3, 2, 2) == true);
+	test.assert(collisionDetection(3, 0, 0, 5, 2, 2) == true);
+	test.assert(collisionDetection(5, 0, 0, 3, 12, 12) == false);
+	test.assert(collisionDetection(5, 5, 5, 3, 12, 12) == false);
+	console.log("Test Case: Collision detection");
+	console.log("=========");
+	console.log("Complete!\n");
+
+
+
+ 	function addFoodOnMap(food_index,food_type,x,y) {
+        if (food_type == 0) {
+           food[food_index] = "normalFood";
+        }
+        else if (food_type == 1) {
+            food[food_index] = "speedup";
+        }
+
+        else if (food_type == 2) {
+            food[food_index] = "poison";
+        }
+        else if (food_type == 3) {
+            food[food_index] = "shrink";
+        }
+        else if (food_type == 4) {
+            food[food_index] = "reverse";
+        }
+        food_posi_x[food_index] = x;
+        food_posi_y[food_index] = y;
+    }
+
+    function collisionDetection(aRad, ax, ay, bRad, bx, by) {
+        var distanceX = bx - ax;
+        var distanceY = by - ay;
+        var distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        if (distance < (aRad + bRad))
+            return true;
+        else
+            return false;
+    }
+
+    var isSpeedUp = false;
+    var INITIAL_SPEED = 3;
+    var INITIAL_SCORE = 10;
+
+	//Calculate speed algorithm test
+    console.log("Testing calculate speed algorithm");
+    test.assert(calculateSpeedAlgorithm())
+    console.log("Test Case: Calculate speed algorithm");
+	console.log("=========");
+	console.log("Complete!\n");
+
+    function calculateSpeedAlgorithm(scale) {
+        var speed;
+        if (isSpeedUp == true) {
+            return INITIAL_SPEED * 2;
+        }
+        else {
+            if (scale == 0.002 * INITIAL_SCORE) {
+                speed = INITIAL_SPEED;
+                return speed;
+            }
+            var radius = (scale * 500) / 2;
+            speed = INITIAL_SPEED * (1 - radius * 0.0018);
+            return speed;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
