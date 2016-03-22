@@ -220,15 +220,15 @@ function calVector(angle,a,b){
 }
 
 
-	/* Test for Client Side */
+/* Test for Client Side */
 	console.log ("\n\n");
 	console.log("Begin testing for client side");
 	console.log("=============================\n\n");
-	var food = [];
+	
+    //Adding food test
+    var food = [];
 	var food_posi_x = [];
 	var food_posi_y = [];
-
-    //Adding food test
     console.log("Testing adding food");
     addFoodOnMap(0, 0, 0, 0);
     test.assert(food[0] == "normalFood");
@@ -257,6 +257,74 @@ function calVector(angle,a,b){
 	console.log("=========");
 	console.log("Complete!\n");
 
+	//Calculate speed algorithm test
+	var isSpeedUp = false;
+    var INITIAL_SPEED = 3;
+    var INITIAL_SCORE = 10;
+    console.log("Testing calculate speed algorithm");
+    test.assert(calculateSpeedAlgorithm(0.02) == 3);
+    console.log("Testing initial speed");
+    test.assert(calculateSpeedAlgorithm(1) == 1.6500000000000001);
+    console.log("Testing speed with no speedup");
+    
+    isSpeedUp = true;
+    test.assert(calculateSpeedAlgorithm(0.02) == 6);
+    console.log("Testing speedup");
+    test.assert(calculateSpeedAlgorithm(1) == 6);
+    console.log("Testing speedup with different scale should have same speed");
+    console.log("Test Case: Calculate speed algorithm");
+	console.log("=========");
+	console.log("Complete!\n");
+
+	//Calculate player scale test
+	console.log("Testing calculate player scale algorithm without shrink powerup");
+	var isShrink = false;
+	test.assert(calculatePlayerScale(10) == 0.03);
+	console.log("Testing initial score scale");
+	test.assert(calculatePlayerScale(50) == 0.15);
+	console.log("Testing score less than 100");
+	test.assert(calculatePlayerScale(200) == 0.36);
+	console.log("Testing score bigger than 100 but less than 500");
+	test.assert(calculatePlayerScale(502) == 0.6);
+	console.log("Testing score bigger than 500\n");
+
+	console.log("Testing calculate player scale algorithm with shrink powerup");
+	isShrink = true;
+	test.assert(calculatePlayerScale(10) == 0.015);
+	console.log("Testing initial score scale");
+	test.assert(calculatePlayerScale(50) == 0.075);
+	console.log("Testing score less than 100");
+	test.assert(calculatePlayerScale(200) == 0.18);
+	console.log("Testing score bigger than 100 but less than 500");
+	test.assert(calculatePlayerScale(502) == 0.3);
+	console.log("Testing score bigger than 500");
+
+	console.log("Test Case: Calculate player scale algorithm");
+	console.log("=========");
+	console.log("Complete!\n");
+
+    //Testing calculate angle algorithm
+    console.log("Testing calculate angle algorithm without reverse powerup");
+    var isReverse = false;
+ 	test.assert(calculateAngle(0,0,0,0) == 0);
+    console.log("Test calculate angle case 1");
+    test.assert(calculateAngle(0,0,0,90) == 1.5707963267948966);
+    console.log("Test calculate angle case 2");
+    test.assert(calculateAngle(0,0,90,0) == 0);
+    console.log("Test calculate angle case 3\n");
+
+    console.log("Testing calculate angle algorithm with reverse powerup");
+    isReverse = true;
+    test.assert(calculateAngle(0,0,0,0) == 0);
+    console.log("Test calculate angle case 4");
+    test.assert(calculateAngle(0,0,0,90) == -1.5707963267948966);
+    console.log("Test calculate angle case 5");
+    test.assert(calculateAngle(0,0,90,0) == 3.141592653589793);
+    console.log("Test calculate angle case 6");
+
+    console.log("Test Case: Calculate angle algorithm");
+	console.log("=========");
+	console.log("Complete!\n");
 
 
  	function addFoodOnMap(food_index,food_type,x,y) {
@@ -291,17 +359,6 @@ function calVector(angle,a,b){
             return false;
     }
 
-    var isSpeedUp = false;
-    var INITIAL_SPEED = 3;
-    var INITIAL_SCORE = 10;
-
-	//Calculate speed algorithm test
-    console.log("Testing calculate speed algorithm");
-    test.assert(calculateSpeedAlgorithm())
-    console.log("Test Case: Calculate speed algorithm");
-	console.log("=========");
-	console.log("Complete!\n");
-
     function calculateSpeedAlgorithm(scale) {
         var speed;
         if (isSpeedUp == true) {
@@ -317,6 +374,44 @@ function calVector(angle,a,b){
             return speed;
         }
     }
+
+    function calculatePlayerScale(score) {
+        var scale;
+        if (score < 100) {
+            scale = score * 0.003;
+        }
+        else if (score < 500) {
+            scale = 100 * 0.003 + (score - 100) * 0.0006;
+        }
+        else {
+            scale = 100 * 0.003 + 500 * 0.0006;
+        }
+
+        if (isShrink == true) {
+            return scale * 0.5;
+        } else {
+            return scale;
+        }
+    }
+
+    function calculateAngle(sourcePointX, sourcePointY, targetPointX, targetPointY) {
+        var tempAngle;
+        if (isReverse == false) {
+            tempAngle = (Math.atan2(targetPointY - sourcePointY, targetPointX - sourcePointX));
+        } else {
+            var reversePointX, reversePointY;
+            reversePointX = 2 * sourcePointX - targetPointX;
+            reversePointY = 2 * sourcePointY - targetPointY;
+            tempAngle = (Math.atan2(reversePointY - sourcePointY, reversePointX - sourcePointX));
+        }
+        return tempAngle;
+    }
+
+
+
+
+
+
 
 
 
