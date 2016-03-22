@@ -112,10 +112,94 @@ console.log("Complete!\n");
 // the end of the test
 console.log("You have finished all the test for the server logic part.\n\n");
 
-console.log("Here is the test for AI part.");
+console.log("Here is the test for AI part.\n");
+
+// Testing adding AI
+console.log("Test case: Getting user direction\n");
 
 
 // Common fucntions
 function getUNIXTimestamp(){
     return Math.floor(Date.now());//change the server accordingly.
+}
+
+// AI functions, not all of them, but those can be tested
+function userDetection(index){
+	var isNearby = false;
+	var nearestUserIndex;
+	var nearestDistance = AI_STARTLED_DISTANCE;
+	var dist;
+	for(var i=0;i<gameboard.activeUserID.length;i++){
+		if(gameboard.activeUserID[i]!=index){
+			dist = calDistance(gameboard.position[index*2],gameboard.position[index*2+1],gameboard.position[gameboard.activeUserID[i]*2],gameboard.position[gameboard.activeUserID[i]*2+1]);
+			if(dist<AI_STARTLED_DISTANCE && dist<nearestDistance){
+				nearestDistance = dist;
+				nearestUserIndex = gameboard.activeUserID[i];
+				isNearby = true;
+			}
+		}
+	}
+	return {userNearby:isNearby, userIndex: nearestUserIndex};
+}
+
+function calDistance(ax,ay,bx,by){
+	return Math.pow((Math.pow(ax-bx,2)+Math.pow(ay-by,2)),0.5);
+}
+
+
+function calAngle(ax,ay,bx,by){
+	return Math.atan2(by-ay,bx-ax);
+}
+
+function runAwayFromUsers(index,nearestUserIndex){
+	var angle = calAngle(gameboard.position[index*2],gameboard.position[index*2+1],gameboard.position[nearestUserIndex*2],gameboard.position[nearestUserIndex*2+1]);
+	var op_direc = angle - Math.PI;
+	if(op_direc< -Math.PI){
+		op_direc += 2 * Math.PI;
+	}
+
+  if (towardsWall(index,op_direc)) {
+    //escape from the wall
+    if (gameboard.position[index*2]<50 && (op_direc>(Math.PI/2)||op_direc<(-Math.PI/2))) {
+      console.log("towards left");
+      return 0;
+
+    }else if (gameboard.position[index*2]>(gameboard.width-50) && ((op_direc<(Math.PI/2) && op_direc > 0) || op_direc > (-Math.PI/2))) {
+      console.log("towards Right");
+      return -Math.PI;
+    }else if (gameboard.position[index*2+1]<50 && op_direc < 0) {
+      console.log("towards bottom");
+      return Math.PI/2;
+    }else if (gameboard.position[index*2+1]>(gameboard.height-50) && op_direc > 0) {
+      console.log("towards top");
+      return -Math.PI/2;;
+    }
+  }
+
+	return op_direc;
+}
+
+function towardsWall(index,op_direc){
+  if (gameboard.position[index*2]<50 && (op_direc>(Math.PI/2)||op_direc<(-Math.PI/2))) {
+    return true;
+  }else if (gameboard.position[index*2]>(gameboard.width-50) && ((op_direc<(Math.PI/2) && op_direc > 0) || op_direc > (-Math.PI/2))) {
+    return true;
+  }else if (gameboard.position[index*2+1]<50 && op_direc < 0) {
+    return true;
+  }else if (gameboard.position[index*2+1]<(gameboard.height-50) && op_direc > 0) {
+    return true;
+  }
+  return false;
+}
+
+//input: angle_c, a, b
+//output: angle_ACD, 2*d
+function calVector(angle,a,b){
+	var c = Math.pow((Math.pow(a,2)+Math.pow(b,2)-2*a*b*Math.cos(angle)),0.5);
+	var angle_a = (Math.pow(b,2)+Math.pow(c,2)-Math.pow(a,2))/(2*b*c);
+	var d = Math.pow((Math.pow(b,2)+Math.pow(0.5*c,2)-2*b*0.5*c*Math.cos(angle_a)),0.5);
+
+	var v_angle = Math.acos((Math.pow(b,2)+Math.pow(d,2)-Math(0.5*c,2))/(2*b*d));
+	var v_length = 2*d;
+	return v_angle;
 }
