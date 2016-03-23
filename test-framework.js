@@ -1,3 +1,8 @@
+
+///////
+
+
+
 // To Test a js class or a js function, you can use the provided functions in this framework
 // However, this framework can only run at Node.js Command Line Tool Enviornment
 // Also, you need to use "npm install unit.js" to set the enviornment for testing
@@ -315,17 +320,131 @@ function calVector(angle,a,b){
 
     console.log("Testing calculate angle algorithm with reverse powerup");
     isReverse = true;
-    test.assert(calculateAngle(0,0,0,0) == 0);
+    test.assert(calculateAngle(0,0,0,0) == 0
+
+
+
+
+
+
+
+
+    	);
     console.log("Test calculate angle case 4");
     test.assert(calculateAngle(0,0,0,90) == -1.5707963267948966);
     console.log("Test calculate angle case 5");
     test.assert(calculateAngle(0,0,90,0) == 3.141592653589793);
     console.log("Test calculate angle case 6");
-
     console.log("Test Case: Calculate angle algorithm");
 	console.log("=========");
 	console.log("Complete!\n");
 
+
+ 	//Testing move function
+    var method = nmap.prototype;
+    function nmap(width,height){
+    	var x;
+    	var y;
+    	this.width = width;
+    	this.height = height;
+    }
+    method.getPositionX = function(){
+    	return x;
+    }
+    method.getPositionY = function(){
+    	return y;
+    }
+    method.setPositionX = function(px){
+    	x = px;
+    }
+    method.setPositionY = function(py){
+    	y = py;
+    };
+    module.exports = nmap;
+
+    var method2 = nsize.prototype;
+    function nsize(width,height){
+    	this.width = width;
+    	this.height = height;
+    }
+    module.exports = nsize;
+    var map = new nmap(1600,1600);
+    var size = new nsize(300,300);
+    var angle = 180;
+    var speed = 3;
+    map.setPositionX(120);
+    map.setPositionY(120);
+    move(angle,speed);
+    console.log("Testing Moving Function")
+    test.assert(map.getPositionX()==118.20461979282642);
+    test.assert(map.getPositionY()==117.59654209279852);
+    console.log("Test Moving function case 1");
+    move(angle,speed);
+    test.assert(map.getPositionX()==116.40923958565284);
+    test.assert(map.getPositionY()==115.19308418559703);
+    console.log("Test Moving function case 2");
+    console.log("=========");
+	console.log("Complete!\n");
+    
+	console.log("Testing screen2map function")
+    var map = new nmap(1,1);
+    map.setPositionX(20);
+    map.setPositionY(20);
+    var nx,ny;
+    nx = screen2map(22,23)[0];
+    test.assert(nx==2);
+	ny = screen2map(25,26)[1];
+	test.assert(ny==6);
+	console.log("Test screen2map function case 1");
+	nx = screen2map(34,21)[0];
+    test.assert(nx==14);
+	ny = screen2map(27,150)[1];
+	test.assert(ny==130);
+	console.log("Test screen2map function case 1");
+	console.log("Test Moving function case 2");
+    console.log("=========");
+	console.log("Complete!\n");
+
+    function screen2map(scrX, scrY) {
+        var x = scrX - map.getPositionX();
+        var y = scrY - map.getPositionY();
+        return [x, y];
+    }
+
+
+    function move(angle, speed){
+    	var isLeft = true;
+    	var isRight = true;
+    	var isUp = true;
+    	var isDown = true;
+    	var sin = Math.sin(angle);
+    	var cos = Math.cos(angle);
+
+    	if(map.getPositionX()>size.width/2-10) isLeft = false;
+    	else isLeft = true;
+    	if(map.getPositionX()<size.width/2-map.width+10) isRight = false;
+    	else isRight = true;
+    	if(map.getPositionY()<size.height/2-map.height+10) isDown = false;
+    	else isDown = true;
+    	if(map.getPositionY()>size.height/2-10) isUp = false;
+    	else isUp = true;
+
+    	if(cos<0){
+        	if(isRight) map.setPositionX(map.getPositionX() + speed * cos);
+        	if(sin<0){
+            	if(isDown) map.setPositionY(map.getPositionY() + speed * sin);
+        	}else{
+            	if(isUp) map.setPositionY(map.getPositionY() + speed * sin);
+        	}
+    	}else {
+        	if(isLeft) map.setPositionX(map.getPositionX() + speed * cos);
+        	if(sin<0){
+            	if(isDown) map.setPositionY(map.getPositionY() + speed * sin);
+        	}else{
+            	if(isUp) map.setPositionY(map.getPositionY() + speed * sin);
+        	}
+    	}
+	}
 
  	function addFoodOnMap(food_index,food_type,x,y) {
         if (food_type == 0) {
