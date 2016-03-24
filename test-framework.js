@@ -129,8 +129,39 @@ test.assert(dir.userNearby == true);
 test.assert(dir.userIndex = 2);
 console.log("Test Case: simulate is near by situation --- Passed");
 console.log("Test Case: returned the right user --- Passed");
+console.log("=========");
+console.log("Complete!\n");
 
+// Testing towards wall function
+console.log("Testing Towards function\n");
+gameboard.updateUserPosition(4, gameboard.width/2,gameboard.height/2,null,getUNIXTimestamp());
+var tempVal = towardsWall(4,0);
+test.assert(tempVal == false);
+console.log("Test Case: Right situation (false, 1) --- Passed");
 
+gameboard.updateUserPosition(4, gameboard.width/2,gameboard.height/2,null,getUNIXTimestamp());
+tempVal = towardsWall(4,Math.PI/2);
+test.assert(tempVal == false);
+console.log("Test Case: Right situation (false, 2) --- Passed");
+
+gameboard.updateUserPosition(4, gameboard.width/2,gameboard.height/2,null,getUNIXTimestamp());
+var tempVal = towardsWall(4,Math.PI);
+test.assert(tempVal == false);
+console.log("Test Case: Right situation (false, 3) --- Passed");
+
+gameboard.updateUserPosition(4, gameboard.width/2,gameboard.height/2,null,getUNIXTimestamp());
+var tempVal = towardsWall(4,-Math.PI/2);
+test.assert(tempVal == false);
+console.log("Test Case: Right situation (false, 4) --- Passed");
+
+gameboard.updateUserPosition(4, 49,49,null,getUNIXTimestamp());
+var tempVal = towardsWall(4,-Math.PI/2);
+test.assert(tempVal == true);
+
+console.log("Test Case: Wrong situation - (true) --- Passed");
+
+console.log("=========");
+console.log("Complete!\n");
 
 
 // Common fucntions
@@ -201,7 +232,7 @@ function towardsWall(index,op_direc){
     return true;
   }else if (gameboard.position[index*2+1]<50 && op_direc < 0) {
     return true;
-  }else if (gameboard.position[index*2+1]<(gameboard.height-50) && op_direc > 0) {
+  }else if (gameboard.position[index*2+1]<50 && op_direc > 0) {
     return true;
   }
   return false;

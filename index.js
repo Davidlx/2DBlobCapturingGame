@@ -206,7 +206,7 @@ function towardsWall(index,op_direc){
     return true;
   }else if (gameboard.position[index*2+1]<50 && op_direc < 0) {
     return true;
-  }else if (gameboard.position[index*2+1]<(gameboard.height-50) && op_direc > 0) {
+  }else if (gameboard.position[index*2+1]<50 && op_direc > 0) {
     return true;
   }
   return false;
