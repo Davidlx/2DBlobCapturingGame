@@ -386,7 +386,7 @@ function calVector(angle,a,b){
     console.log("=========");
 	console.log("Complete!\n");
     
-	console.log("Testing screen2map function")
+	console.log("Testing screen2map function");
     var map = new nmap(1,1);
     map.setPositionX(20);
     map.setPositionY(20);
@@ -404,6 +404,40 @@ function calVector(angle,a,b){
 	console.log("Test Moving function case 2");
     console.log("=========");
 	console.log("Complete!\n");
+
+	var method3 = npara.prototype;
+    function npara(index){
+    	this.index = index;
+    }
+    module.exports = npara;
+   	var userStatus = [];
+
+   	var para = new npara(0);
+   	userleave(para);
+   	console.log("Testing userleave function");
+   	test.assert(userStatus[0]=='not started');
+   	console.log("Testing userleave function case 1");
+   	var para = new npara(1);
+   	userleave(para);
+   	test.assert(userStatus[1] == 'not started');
+   	console.log("Testing userleave function case 2");
+   	console.log("=========");
+	console.log("Complete!\n");
+
+
+	function userleave(para){
+        	//lowLog("User "+para.index+" has left 281");
+            userStatus[para.index] = 'not started';
+            //map.removeChild(users[para.index],true);
+            //map.removeChild(userLabels[para.index],true);
+            if(para.index==index){
+                //gameOver(para.score);
+            }else{
+                    //map.removeChild(users[para.user_index],true);
+                    //map.removeChild(userLabels[para.user_index],true);
+            }
+
+    }
 
     function screen2map(scrX, scrY) {
         var x = scrX - map.getPositionX();
