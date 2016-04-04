@@ -31,7 +31,7 @@ var AI_Interval_ID = [];
 var AI_Interval_Move_ID = [];
 
 //Started to Test
-
+console.log("Begin testing for server side");
 //Adding users
 console.log("Testing adding/deleting User\n");
 gameboard.addUser("test1",null,getUNIXTimestamp,null);
@@ -167,6 +167,7 @@ console.log("Test Case: Wrong situation - (true) --- Passed");
 
 console.log("=========");
 console.log("Complete!\n");
+console.log("Unit Test for server side is completed!");
 
 
 // Common fucntions
@@ -257,10 +258,9 @@ function calVector(angle,a,b){
 
 
 /* Test for Client Side */
-	console.log ("\n\n");
 	console.log("Begin testing for client side");
 	console.log("=============================\n\n");
-	
+
     //Adding food test
     var food = [];
 	var food_posi_x = [];
@@ -302,7 +302,7 @@ function calVector(angle,a,b){
     console.log("Testing initial speed");
     test.assert(calculateSpeedAlgorithm(1) == 1.6500000000000001);
     console.log("Testing speed with no speedup");
-    
+
     isSpeedUp = true;
     test.assert(calculateSpeedAlgorithm(0.02) == 6);
     console.log("Testing speedup");
@@ -351,16 +351,7 @@ function calVector(angle,a,b){
 
     console.log("Testing calculate angle algorithm with reverse powerup");
     isReverse = true;
-    test.assert(calculateAngle(0,0,0,0) == 0
-
-
-
-
-
-
-
-
-    	);
+    test.assert(calculateAngle(0,0,0,0) == 0);
     console.log("Test calculate angle case 4");
     test.assert(calculateAngle(0,0,0,90) == -1.5707963267948966);
     console.log("Test calculate angle case 5");
@@ -416,7 +407,7 @@ function calVector(angle,a,b){
     console.log("Test Moving function case 2");
     console.log("=========");
 	console.log("Complete!\n");
-    
+
 	console.log("Testing screen2map function");
     var map = new nmap(1,1);
     map.setPositionX(20);
@@ -454,6 +445,8 @@ function calVector(angle,a,b){
    	console.log("Testing userleave function case 2");
    	console.log("=========");
 	console.log("Complete!\n");
+
+    console.log("Unit Test for client side and server side are completed!");
 
 
 	function userleave(para){
@@ -590,37 +583,3 @@ function calVector(angle,a,b){
         }
         return tempAngle;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
