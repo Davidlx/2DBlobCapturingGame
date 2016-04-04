@@ -1,3 +1,8 @@
+
+///////
+
+
+
 // To Test a js class or a js function, you can use the provided functions in this framework
 // However, this framework can only run at Node.js Command Line Tool Enviornment
 // Also, you need to use "npm install unit.js" to set the enviornment for testing
@@ -249,3 +254,373 @@ function calVector(angle,a,b){
 	var v_length = 2*d;
 	return v_angle;
 }
+
+
+/* Test for Client Side */
+	console.log ("\n\n");
+	console.log("Begin testing for client side");
+	console.log("=============================\n\n");
+	
+    //Adding food test
+    var food = [];
+	var food_posi_x = [];
+	var food_posi_y = [];
+    console.log("Testing adding food");
+    addFoodOnMap(0, 0, 0, 0);
+    test.assert(food[0] == "normalFood");
+    test.assert(food_posi_x[0] == 0);
+    test.assert(food_posi_y[0] == 0);
+    console.log("Adding first food");
+    addFoodOnMap(1, 1, 10, 50);
+    test.assert(food[0] == "normalFood");
+    test.assert(food_posi_x[0] == 0);
+    test.assert(food_posi_y[0] == 0);
+    test.assert(food[1] == "speedup");
+    test.assert(food_posi_x[1] == 10);
+    test.assert(food_posi_y[1] == 50);
+    console.log("Adding second food");
+    console.log("Test Case: Add foods on map");
+	console.log("=========");
+	console.log("Complete!\n");
+
+	//Collision detection test
+	console.log("Testing collision detection");
+	test.assert(collisionDetection(5, 0, 0, 3, 2, 2) == true);
+	test.assert(collisionDetection(3, 0, 0, 5, 2, 2) == true);
+	test.assert(collisionDetection(5, 0, 0, 3, 12, 12) == false);
+	test.assert(collisionDetection(5, 5, 5, 3, 12, 12) == false);
+	console.log("Test Case: Collision detection");
+	console.log("=========");
+	console.log("Complete!\n");
+
+	//Calculate speed algorithm test
+	var isSpeedUp = false;
+    var INITIAL_SPEED = 3;
+    var INITIAL_SCORE = 10;
+    console.log("Testing calculate speed algorithm");
+    test.assert(calculateSpeedAlgorithm(0.02) == 3);
+    console.log("Testing initial speed");
+    test.assert(calculateSpeedAlgorithm(1) == 1.6500000000000001);
+    console.log("Testing speed with no speedup");
+    
+    isSpeedUp = true;
+    test.assert(calculateSpeedAlgorithm(0.02) == 6);
+    console.log("Testing speedup");
+    test.assert(calculateSpeedAlgorithm(1) == 6);
+    console.log("Testing speedup with different scale should have same speed");
+    console.log("Test Case: Calculate speed algorithm");
+	console.log("=========");
+	console.log("Complete!\n");
+
+	//Calculate player scale test
+	console.log("Testing calculate player scale algorithm without shrink powerup");
+	var isShrink = false;
+	test.assert(calculatePlayerScale(10) == 0.03);
+	console.log("Testing initial score scale");
+	test.assert(calculatePlayerScale(50) == 0.15);
+	console.log("Testing score less than 100");
+	test.assert(calculatePlayerScale(200) == 0.36);
+	console.log("Testing score bigger than 100 but less than 500");
+	test.assert(calculatePlayerScale(502) == 0.6);
+	console.log("Testing score bigger than 500\n");
+
+	console.log("Testing calculate player scale algorithm with shrink powerup");
+	isShrink = true;
+	test.assert(calculatePlayerScale(10) == 0.015);
+	console.log("Testing initial score scale");
+	test.assert(calculatePlayerScale(50) == 0.075);
+	console.log("Testing score less than 100");
+	test.assert(calculatePlayerScale(200) == 0.18);
+	console.log("Testing score bigger than 100 but less than 500");
+	test.assert(calculatePlayerScale(502) == 0.3);
+	console.log("Testing score bigger than 500");
+
+	console.log("Test Case: Calculate player scale algorithm");
+	console.log("=========");
+	console.log("Complete!\n");
+
+    //Testing calculate angle algorithm
+    console.log("Testing calculate angle algorithm without reverse powerup");
+    var isReverse = false;
+ 	test.assert(calculateAngle(0,0,0,0) == 0);
+    console.log("Test calculate angle case 1");
+    test.assert(calculateAngle(0,0,0,90) == 1.5707963267948966);
+    console.log("Test calculate angle case 2");
+    test.assert(calculateAngle(0,0,90,0) == 0);
+    console.log("Test calculate angle case 3\n");
+
+    console.log("Testing calculate angle algorithm with reverse powerup");
+    isReverse = true;
+    test.assert(calculateAngle(0,0,0,0) == 0
+
+
+
+
+
+
+
+
+    	);
+    console.log("Test calculate angle case 4");
+    test.assert(calculateAngle(0,0,0,90) == -1.5707963267948966);
+    console.log("Test calculate angle case 5");
+    test.assert(calculateAngle(0,0,90,0) == 3.141592653589793);
+    console.log("Test calculate angle case 6");
+    console.log("Test Case: Calculate angle algorithm");
+	console.log("=========");
+	console.log("Complete!\n");
+
+
+ 	//Testing move function
+    var method = nmap.prototype;
+    function nmap(width,height){
+    	var x;
+    	var y;
+    	this.width = width;
+    	this.height = height;
+    }
+    method.getPositionX = function(){
+    	return x;
+    }
+    method.getPositionY = function(){
+    	return y;
+    }
+    method.setPositionX = function(px){
+    	x = px;
+    }
+    method.setPositionY = function(py){
+    	y = py;
+    };
+    module.exports = nmap;
+
+    var method2 = nsize.prototype;
+    function nsize(width,height){
+    	this.width = width;
+    	this.height = height;
+    }
+    module.exports = nsize;
+    var map = new nmap(1600,1600);
+    var size = new nsize(300,300);
+    var angle = 180;
+    var speed = 3;
+    map.setPositionX(120);
+    map.setPositionY(120);
+    move(angle,speed);
+    console.log("Testing Moving Function")
+    test.assert(map.getPositionX()==118.20461979282642);
+    test.assert(map.getPositionY()==117.59654209279852);
+    console.log("Test Moving function case 1");
+    move(angle,speed);
+    test.assert(map.getPositionX()==116.40923958565284);
+    test.assert(map.getPositionY()==115.19308418559703);
+    console.log("Test Moving function case 2");
+    console.log("=========");
+	console.log("Complete!\n");
+    
+	console.log("Testing screen2map function");
+    var map = new nmap(1,1);
+    map.setPositionX(20);
+    map.setPositionY(20);
+    var nx,ny;
+    nx = screen2map(22,23)[0];
+    test.assert(nx==2);
+	ny = screen2map(25,26)[1];
+	test.assert(ny==6);
+	console.log("Test screen2map function case 1");
+	nx = screen2map(34,21)[0];
+    test.assert(nx==14);
+	ny = screen2map(27,150)[1];
+	test.assert(ny==130);
+	console.log("Test screen2map function case 1");
+	console.log("Test Moving function case 2");
+    console.log("=========");
+	console.log("Complete!\n");
+
+	var method3 = npara.prototype;
+    function npara(index){
+    	this.index = index;
+    }
+    module.exports = npara;
+   	var userStatus = [];
+
+   	var para = new npara(0);
+   	userleave(para);
+   	console.log("Testing userleave function");
+   	test.assert(userStatus[0]=='not started');
+   	console.log("Testing userleave function case 1");
+   	var para = new npara(1);
+   	userleave(para);
+   	test.assert(userStatus[1] == 'not started');
+   	console.log("Testing userleave function case 2");
+   	console.log("=========");
+	console.log("Complete!\n");
+
+
+	function userleave(para){
+        	//lowLog("User "+para.index+" has left 281");
+            userStatus[para.index] = 'not started';
+            //map.removeChild(users[para.index],true);
+            //map.removeChild(userLabels[para.index],true);
+            if(para.index==index){
+                //gameOver(para.score);
+            }else{
+                    //map.removeChild(users[para.user_index],true);
+                    //map.removeChild(userLabels[para.user_index],true);
+            }
+
+    }
+
+    function screen2map(scrX, scrY) {
+        var x = scrX - map.getPositionX();
+        var y = scrY - map.getPositionY();
+        return [x, y];
+    }
+
+
+    function move(angle, speed){
+    	var isLeft = true;
+    	var isRight = true;
+    	var isUp = true;
+    	var isDown = true;
+    	var sin = Math.sin(angle);
+    	var cos = Math.cos(angle);
+
+    	if(map.getPositionX()>size.width/2-10) isLeft = false;
+    	else isLeft = true;
+    	if(map.getPositionX()<size.width/2-map.width+10) isRight = false;
+    	else isRight = true;
+    	if(map.getPositionY()<size.height/2-map.height+10) isDown = false;
+    	else isDown = true;
+    	if(map.getPositionY()>size.height/2-10) isUp = false;
+    	else isUp = true;
+
+    	if(cos<0){
+        	if(isRight) map.setPositionX(map.getPositionX() + speed * cos);
+        	if(sin<0){
+            	if(isDown) map.setPositionY(map.getPositionY() + speed * sin);
+        	}else{
+            	if(isUp) map.setPositionY(map.getPositionY() + speed * sin);
+        	}
+    	}else {
+        	if(isLeft) map.setPositionX(map.getPositionX() + speed * cos);
+        	if(sin<0){
+            	if(isDown) map.setPositionY(map.getPositionY() + speed * sin);
+        	}else{
+            	if(isUp) map.setPositionY(map.getPositionY() + speed * sin);
+        	}
+    	}
+	}
+
+ 	function addFoodOnMap(food_index,food_type,x,y) {
+        if (food_type == 0) {
+           food[food_index] = "normalFood";
+        }
+        else if (food_type == 1) {
+            food[food_index] = "speedup";
+        }
+
+        else if (food_type == 2) {
+            food[food_index] = "poison";
+        }
+        else if (food_type == 3) {
+            food[food_index] = "shrink";
+        }
+        else if (food_type == 4) {
+            food[food_index] = "reverse";
+        }
+        food_posi_x[food_index] = x;
+        food_posi_y[food_index] = y;
+    }
+
+    function collisionDetection(aRad, ax, ay, bRad, bx, by) {
+        var distanceX = bx - ax;
+        var distanceY = by - ay;
+        var distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        if (distance < (aRad + bRad))
+            return true;
+        else
+            return false;
+    }
+
+    function calculateSpeedAlgorithm(scale) {
+        var speed;
+        if (isSpeedUp == true) {
+            return INITIAL_SPEED * 2;
+        }
+        else {
+            if (scale == 0.002 * INITIAL_SCORE) {
+                speed = INITIAL_SPEED;
+                return speed;
+            }
+            var radius = (scale * 500) / 2;
+            speed = INITIAL_SPEED * (1 - radius * 0.0018);
+            return speed;
+        }
+    }
+
+    function calculatePlayerScale(score) {
+        var scale;
+        if (score < 100) {
+            scale = score * 0.003;
+        }
+        else if (score < 500) {
+            scale = 100 * 0.003 + (score - 100) * 0.0006;
+        }
+        else {
+            scale = 100 * 0.003 + 500 * 0.0006;
+        }
+
+        if (isShrink == true) {
+            return scale * 0.5;
+        } else {
+            return scale;
+        }
+    }
+
+    function calculateAngle(sourcePointX, sourcePointY, targetPointX, targetPointY) {
+        var tempAngle;
+        if (isReverse == false) {
+            tempAngle = (Math.atan2(targetPointY - sourcePointY, targetPointX - sourcePointX));
+        } else {
+            var reversePointX, reversePointY;
+            reversePointX = 2 * sourcePointX - targetPointX;
+            reversePointY = 2 * sourcePointY - targetPointY;
+            tempAngle = (Math.atan2(reversePointY - sourcePointY, reversePointX - sourcePointX));
+        }
+        return tempAngle;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
