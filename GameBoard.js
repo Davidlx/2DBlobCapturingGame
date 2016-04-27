@@ -206,14 +206,7 @@ GameBoard.prototype.userDisconnect = function(socket,io){
 
 //logic fucntions for maintaning the game
 GameBoard.prototype.deleteUser = function(index, io){
-	// this.position.splice(index,1);
- //    this.sockets.splice(index,1);
- //    this.name.splice(index,1);
- //    this.speed.splice(index,1);
- //    this.direction.splice(index,1);
- //    this.score.splice(index,1);
-     this.status[index] = this.statusType[1];
- //    this.timestamp.splice(index,1);
+    this.status[index] = this.statusType[1];
     HighLog("User "+index+" is deleted.");
     boardcastToAllUser(io,"user_leave",{index:index});
     HighLog(this.position);
@@ -232,17 +225,15 @@ GameBoard.prototype.resetUser = function(index, io,timestamp){
     var posi_y = generate_random_posi(this.height);
     this.updateUserPosition(index, RANDOM_X, RANDOM_Y, io,timestamp);
     this.updateUserSpeed(index, posi_x, posi_y, 0, io,timestamp);
-    //this.updateUserScale(index, posi_x, posi_y, 0, io,timestamp);
     this.updateUserScore(index, posi_x, posi_y, this.Default_User_Mas, io,timestamp);
     this.updateUserStatus(index, posi_x, posi_y, this.statusType[0], io,timestamp);
 
     boardcastToAllUser(io,"user_reset",{index:index,posi_x:posi_x,posi_y:posi_y,score:this.Default_User_Mas});
 };
 
+// Used for initial set up
 GameBoard.prototype.generateFoods = function (num,food_type,timestamp) {
 	//generate the food
-    //****
-
     for (var i = num; i >= 0; i--) {
         var posi_x = generate_random_posi(this.width);
         var posi_y = generate_random_posi(this.height);
@@ -257,7 +248,6 @@ GameBoard.prototype.generateFoods = function (num,food_type,timestamp) {
 
 GameBoard.prototype.generateFood = function (food_index,food_type,timestamp,io) {
     //generate the food
-    //****
     var posi_x = generate_random_posi(this.width);
     var posi_y = generate_random_posi(this.height);
     this.food_posi[food_index*2]=posi_x;
@@ -269,7 +259,6 @@ GameBoard.prototype.generateFood = function (food_index,food_type,timestamp,io) 
 GameBoard.prototype.addUser = function(username,socket,timestamp,io){
 	//when the user connect, update the user information.
     //scan use list to find the first empty location.
-    //****
     sys_log("add user: timestamp =  "+timestamp);
     var posi_x = generate_random_posi(this.width);
     var posi_y = generate_random_posi(this.height);
@@ -400,6 +389,7 @@ function generate_random_posi(range){
     return Math.round(Math.random()*range);
 }
 
+//Do not open logs to prevent the docker logs becoming too long
 function sys_log(msg){
     //console.log(msg);
 }
