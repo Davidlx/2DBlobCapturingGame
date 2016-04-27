@@ -16,7 +16,7 @@ var AI_STARTLED_DISTANCE = 250;
 var AI_Interval_ID = [];
 var AI_Interval_Move_ID = [];
 
-
+// Redirect to client repository
 app.use(express.static(path.join(__dirname,'../2DBlobClient/game')));
 
 app.get('/', function(req, res){
@@ -73,6 +73,8 @@ io.on('connection',function(socket){
 
 });
 
+
+// AI functions, to simulate the AI agent movements
 function addAI(io){
 	var AICounter=0;
 	for(var i=0; i<gameboard.status.length; i++){
@@ -267,7 +269,7 @@ function deleteAI(index,io){
   addAI(io);
 }
 
-
+// Start the server to listen to port 3000
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
