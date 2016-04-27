@@ -1,8 +1,3 @@
-
-///////
-
-
-
 // To Test a js class or a js function, you can use the provided functions in this framework
 // However, this framework can only run at Node.js Command Line Tool Enviornment
 // Also, you need to use "npm install unit.js" to set the enviornment for testing
@@ -18,6 +13,7 @@ var test = require('unit.js');
 
 
 // Ideally, you need to test at least 5 cases against each functions. And you need to provide commonts for each test case.
+// For server side testing, all the network operations need to be comment out, please do this before the run this test.
 var Gameboard = require('./GameBoard.js');
 
 var MAP_SIZE = 1600;
